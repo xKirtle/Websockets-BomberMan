@@ -6,6 +6,10 @@ html {
     margin-right: auto;
 }
 
+input {
+    font-family: 'Montserrat', serif;
+}
+
 .container {
     width: 500px;
     border: 1px solid white;
@@ -89,6 +93,21 @@ html {
     box-shadow: 0 1px white;
 }
 
+.hotKeyColumn1 {
+    height: 50px;
+    width: 30%;
+    font-size: 32px;
+    box-shadow: 1px 0 white;
+    float: left;
+}
+
+.hotKeyColumn2 {
+    height: 50px;
+    width: 70%;
+    font-size: 32px;
+    float: left;
+}
+
 .rowColor {
     height: 32px;
     width: 25%;
@@ -157,4 +176,59 @@ html {
     height: 5px;
     border-radius: 50%;
     background: white;
+}
+
+.menuButton {
+    height: 30px;
+    width: 170px;
+    margin: 10px 40px;
+}
+
+.displayHotkey {
+    height: 30px;
+    width: 170px;
+    margin: 10px 10px;
+    font-size: 20px;
+    visibility: visible;
+}
+
+.menuButton:hover {
+    background-color: #ccc;
+}
+
+.displayHotkey:hover {
+    background-color: #aaa;
+    border-radius: 3px;
+}
+
+
+.hotKeyArrow {
+    height: 30px;
+    position: relative;
+    top: 10px;
+    margin: auto 5px;
+}
+
+.keyInput {
+    height: 26px;
+    width: 170px;
+    font-size: 20px;
+    margin: 10px 10px;
+    position: relative;
+    right: 14%;
+    float: right;
+    background-color: transparent;
+    color: white;
+    text-align: center;
+    visibility: visible;
+}
+
+.hotKeyArrowCheck {
+    height: 30px;
+    margin: auto 0px;
+    position: relative;
+    right: 5%;
+    top: 10px;
+    float: right;
+    visibility: visible;
 }

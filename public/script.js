@@ -6,6 +6,12 @@ var socket = io.connect();
 var body = document.getElementsByTagName('body')[0];
 var playerName = localStorage.getItem('playerName');
 
+//Controls (Up, Down, Left, Right) (https://keycode.info/)
+var WSAD = [87, 83, 65, 68];
+var ARROWS = [38, 40, 37, 39];
+var customKeys = false;
+var CUSTOM = [];
+
 //Emit Events
 socket.emit('socketConnection', playerName);
 socket.emit('connection', playerName);
@@ -20,6 +26,17 @@ socket.on('generatePage', () => {
 });
 
 //Functions
+function slideOutAndChange(container, parent, func) {
+    container.classList.add('slideOut');
+    container.style.marginTop = '-300px';
+    setTimeout(() => {
+        while (parent.firstChild) {
+            parent.removeChild(parent.firstChild);
+        }
+        func();
+    }, 500);
+}
+
 function promptName() {
     let container = document.createElement('div');
     container.classList.add('container');
@@ -47,14 +64,7 @@ function promptName() {
         if (keycode == '13') {
             localStorage.setItem('playerName', playerNameInput.value);
             playerName = localStorage.getItem('playerName');
-            container.classList.add('slideOut');
-            container.style.marginTop = '-300px';
-            setTimeout(() => {
-                while (body.firstChild) {
-                    body.removeChild(body.firstChild);
-                }
-                generatePage();
-            }, 500);
+            slideOutAndChange(container, body, generatePage);
         }
     });
 }
@@ -63,13 +73,48 @@ function generatePage() {
     let container = document.createElement('div');
     container.classList.add('container');
     container.id = 'container';
-    container.style.height = '300px';
+    //container.style.height = '300px';
     body.appendChild(container);
 
     //Top Row
     let row = document.createElement('div');
     row.classList.add('row');
     row.textContent = 'Welcome back, ' + playerName;
+    row.style.padding = '10px 0';
+    container.appendChild(row);
+
+    let startGame = document.createElement('input');
+    startGame.type = 'button';
+    startGame.value = 'START';
+    startGame.classList.add('menuButton');
+    container.appendChild(startGame);
+
+    let changeHotkeys = document.createElement('input');
+    changeHotkeys.type = 'button';
+    changeHotkeys.value = 'OPTIONS';
+    changeHotkeys.classList.add('menuButton');
+    container.appendChild(changeHotkeys);
+
+    startGame.addEventListener('click', () => {
+        slideOutAndChange(container, body, startGamePage);
+    });
+
+    changeHotkeys.addEventListener('click', () => {
+        slideOutAndChange(container, body, changeHotkeysPage);
+    });
+}
+
+function startGamePage() {
+    let container = document.createElement('div');
+    container.classList.add('container');
+    container.id = 'container';
+    //container.style.height = '300px';
+    body.appendChild(container);
+
+    //Top Row
+    let row = document.createElement('div');
+    row.classList.add('row');
+    row.textContent = 'CHOOSE A CHARACTER';
     row.style.padding = '10px 0';
     container.appendChild(row);
 
@@ -150,4 +195,104 @@ function generatePage() {
     colorsRow.appendChild(labelRadio4);
 
     container.appendChild(colorsRow);
+}
+
+function changeHotkeysPage() {
+    let container = document.createElement('div');
+    container.classList.add('container');
+    container.id = 'container';
+    //container.style.height = '300px';
+    body.appendChild(container);
+
+    //Top Row
+    let row = document.createElement('div');
+    row.classList.add('row');
+    row.textContent = 'OPTIONS';
+    row.style.padding = '10px 0';
+    container.appendChild(row);
+
+    //Radio Buttons Row
+    let hotKeysRow = document.createElement('div');
+    hotKeysRow.classList.add('row');
+    hotKeysRow.style.textAlign = 'left';
+    hotKeysRow.style.textIndent = '15px';
+    container.appendChild(hotKeysRow);
+
+    //Left Side
+    let hotKeysColumn1 = document.createElement('div');
+    hotKeysColumn1.classList.add('hotKeyColumn1');
+    container.appendChild(hotKeysColumn1);
+
+    let labelUp = document.createElement('label');
+    labelUp.textContent = 'UP';
+    labelUp.classList.add('hotKeyArrow');
+    labelUp.style.top = '5px';
+    hotKeysColumn1.appendChild(labelUp);
+
+    let upArrow = document.createElement('img');
+    upArrow.src = 'images/UpArrow.png';
+    upArrow.classList.add('hotKeyArrow');
+    hotKeysColumn1.appendChild(upArrow);
+
+    //Right Side
+    let hotKeyColumn2 = document.createElement('div');
+    hotKeyColumn2.classList.add('hotKeyColumn2');
+    container.appendChild(hotKeyColumn2);
+
+    let selectUpKey = document.createElement('label');
+    selectUpKey.textContent = 'DownArrow';
+    selectUpKey.classList.add('displayHotkey');
+    hotKeyColumn2.appendChild(selectUpKey);
+
+    //Clicks to change current key
+    selectUpKey.addEventListener('click', () => {
+        var previousUpKey = selectUpKey.textContent;
+        selectUpKey.textContent = '';
+        selectUpKey.style.visibility = 'collapse';
+
+        let applyNewKey = document.createElement('input');
+        applyNewKey.type = 'image';
+        applyNewKey.src = 'images/checkbox.png';
+        applyNewKey.classList.add('hotKeyArrowCheck');
+        hotKeyColumn2.appendChild(applyNewKey);
+
+        let keyInput = document.createElement('input');
+        keyInput.type = 'text';
+        keyInput.value = 'DownArrow';
+        keyInput.classList.add('keyInput');
+        keyInput.readOnly = 'readonly';
+        hotKeyColumn2.appendChild(keyInput);
+
+        //Presses any key on the keyboard to change it
+        var myKeyDown = function (evt) {
+            // TODO: Implement a constant of valid accepted keys
+
+            //Escape
+            if (evt.keyCode != '27') {
+                let keyDown = evt.code.replace('Key', '').replace('Digit', '');
+                keyInput.value = keyDown;
+                CUSTOM[0] = evt.keyCode;
+
+                customKeys = true;
+            } else {
+                window.removeEventListener('keydown', myKeyDown);
+
+                selectUpKey.textContent = previousUpKey;
+                hotKeyColumn2.removeChild(applyNewKey);
+                hotKeyColumn2.removeChild(keyInput);
+                selectUpKey.style.visibility = 'visible';
+            }
+        }
+
+        window.addEventListener('keydown', myKeyDown);
+
+        applyNewKey.addEventListener('click', () => {
+            window.removeEventListener('keydown', myKeyDown);
+
+            selectUpKey.textContent = keyInput.value;
+            hotKeyColumn2.removeChild(applyNewKey);
+            hotKeyColumn2.removeChild(keyInput);
+            selectUpKey.style.visibility = 'visible';
+        });
+    });
 }

@@ -90,14 +90,17 @@ html {
 }
 
 .rowColor {
+    height: 32px;
     width: 25%;
     user-select: none;
     cursor: pointer;
     position: relative;
     display: block;
     text-align: start;
-    text-indent: 40px;
-    box-shadow: 1px 0 white;
+    text-indent: 35px;
+    box-shadow: 1px 1px white;
+    float: left;
+    font-size: 24px;
 }
 
 .rowColor input {
@@ -110,8 +113,8 @@ html {
     position: absolute;
     top: 0;
     left: 0;
-    height: 20px;
-    width: 20px;
+    height: 12.5px;
+    width: 12.5px;
     background-color: #eee;
     border-radius: 50%;
     margin: 10px 10px;
@@ -121,8 +124,20 @@ html {
     background-color: #ccc;
 }
 
-.rowColor input:checked~.radio {
-    background-color: #900;
+.rowColor input:checked~.red {
+    background-color: rgb(180, 34, 34);
+}
+
+.rowColor input:checked~.blue {
+    background-color: rgb(54, 95, 146);
+}
+
+.rowColor input:checked~.pink {
+    background-color: rgb(207, 46, 186);
+}
+
+.rowColor input:checked~.gray {
+    background-color: rgb(99, 91, 91);
 }
 
 .radio:after {
@@ -136,10 +151,10 @@ html {
 }
 
 .rowColor .radio:after {
-    top: 7px;
-    left: 7px;
-    width: 6px;
-    height: 6px;
+    top: 4px;
+    left: 4px;
+    width: 5px;
+    height: 5px;
     border-radius: 50%;
     background: white;
 }

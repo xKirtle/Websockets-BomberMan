@@ -1,0 +1,145 @@
+html {
+    background-color: #232323;
+    color: white;
+    font-family: 'Montserrat', serif;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.container {
+    width: 500px;
+    border: 1px solid white;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 20px;
+    text-align: center;
+    animation-name: slideIn;
+    animation-duration: 0.5s;
+    overflow: hidden;
+}
+
+@keyframes slideIn {
+    0% {
+        margin-top: -100px
+    }
+
+    70% {
+        margin-top: 30px;
+    }
+
+    100% {
+        margin-top: 20px;
+    }
+}
+
+@keyframes slideOut {
+    0% {
+        margin-top: 20px;
+    }
+
+    30% {
+        margin-top: 30px;
+    }
+
+    60% {
+        margintop: -150px;
+    }
+
+    100% {
+        margin-top: -300px;
+    }
+}
+
+#container.slideOut {
+    animation-name: slideOut;
+    animation-duration: 0.5s;
+}
+
+@media (max-width: 600px) {
+    .container {
+        width: 85%;
+    }
+}
+
+.playerInfo {
+    width: 100%;
+    display: block;
+    border: 0;
+    box-shadow: white;
+    border-top: 1px solid white;
+}
+
+.inputName {
+    width: 100%;
+    height: 100%;
+    font-size: 40px;
+    background: transparent;
+    color: white;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+
+.row {
+    height: auto;
+    width: 100%;
+    font-size: 32px;
+    position: relative;
+    word-wrap: break-word;
+    box-shadow: 0 1px white;
+}
+
+.rowColor {
+    width: 25%;
+    user-select: none;
+    cursor: pointer;
+    position: relative;
+    display: block;
+    text-align: start;
+    text-indent: 40px;
+    box-shadow: 1px 0 white;
+}
+
+.rowColor input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.radio {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 20px;
+    width: 20px;
+    background-color: #eee;
+    border-radius: 50%;
+    margin: 10px 10px;
+}
+
+.rowColor:hover input~.radio {
+    background-color: #ccc;
+}
+
+.rowColor input:checked~.radio {
+    background-color: #900;
+}
+
+.radio:after {
+    content: '';
+    position: absolute;
+    display: none;
+}
+
+.rowColor input:checked~.radio:after {
+    display: block;
+}
+
+.rowColor .radio:after {
+    top: 7px;
+    left: 7px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: white;
+}

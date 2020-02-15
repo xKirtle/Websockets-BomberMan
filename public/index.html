@@ -11,6 +11,38 @@
 </head>
 
 <body>
+    <!-- Prompt Name -->
+    <div class="container invisible" id="containerPromptName">
+        <label style="font-size: 26px;">What is your name?</label>
+        <div class="playerInfo">
+            <input type="text" class="inputName" id="inputName" placeholder="Your name goes here.." maxlength="32" />
+        </div>
+    </div>
+
+    <!-- Main Menu -->
+    <div class="container invisible" id="containerMainMenu">
+        <div class="row" style="padding: 10px 0px;" id="welcome">Welcome back, Kirtle</div>
+        <input type="button" value="START" class="menuButton" id="startGame">
+        <input type="button" value="OPTIONS" class="menuButton" id="changeHotkeys">
+    </div>
+
+    <!-- Options Menu -->
+    <div class="container invisible" id="containerOptionsMenu">
+        <div class="row" style="padding: 10px 0px;">OPTIONS</div>
+        <div class="row" style="text-align: left; text-indent: 15px;"></div>
+        <div class="hotKeyColumn1">
+            <label class="hotKeyArrow" style="top: 5px;">UP</label>
+            <img src="images/UpArrow.png" class="hotKeyArrow" />
+        </div>
+        <div class="hotKeyColumn2">
+            <label class="displayHotkey" id="displayHotkey"></label>
+            <input type="image" src="images/checkbox.png" class="hotKeyArrowCheck invisible" id="applyNewKey" />
+            <input type="text" value="" class="keyInput invisible" id="keyInput" readonly="readonly" />
+        </div>
+    </div>
+
+    <!-- Start Menu -->
+    <div id="containerStartMenu"></div>
 </body>
 <script src="script.js"></script>
 

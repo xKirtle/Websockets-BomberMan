@@ -24,7 +24,7 @@ input {
 
 @keyframes slideIn {
     0% {
-        margin-top: -100px
+        margin-top: -300px
     }
 
     70% {
@@ -45,16 +45,16 @@ input {
         margin-top: 30px;
     }
 
-    60% {
-        margintop: -150px;
+    99% {
+        margin-top: -300px;
     }
 
     100% {
-        margin-top: -300px;
+        margin-top: -1200px;
     }
 }
 
-#container.slideOut {
+.container.slideOut {
     animation-name: slideOut;
     animation-duration: 0.5s;
 }
@@ -189,7 +189,6 @@ input {
     width: 170px;
     margin: 10px 10px;
     font-size: 20px;
-    visibility: visible;
 }
 
 .menuButton:hover {
@@ -220,7 +219,6 @@ input {
     background-color: transparent;
     color: white;
     text-align: center;
-    visibility: visible;
 }
 
 .hotKeyArrowCheck {
@@ -230,5 +228,8 @@ input {
     right: 5%;
     top: 10px;
     float: right;
-    visibility: visible;
+}
+
+.invisible {
+    display: none;
 }

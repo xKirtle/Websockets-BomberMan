@@ -3,8 +3,19 @@
 var socket = io.connect();
 
 //DOM QUERIES
-var body = document.getElementsByTagName('body')[0];
 var playerName = localStorage.getItem('playerName');
+var body = document.getElementsByTagName('body')[0];
+var containerPromptName = document.getElementById('containerPromptName');
+var containerMainMenu = document.getElementById('containerMainMenu');
+var containerOptionsMenu = document.getElementById('containerOptionsMenu');
+var containerStartMenu = document.getElementById('containerStartMenu');
+var welcome = document.getElementById('welcome');
+var playerNameInput = document.getElementById('inputName');
+var startGame = document.getElementById('startGame');
+var changeHotkeys = document.getElementById('changeHotkeys');
+var displayHotkeyUp = document.getElementById('displayHotkey');
+var keyInput = document.getElementById('keyInput');
+var applyNewKey = document.getElementById('applyNewKey');
 
 //Controls (Up, Down, Left, Right) (https://keycode.info/)
 var customKeys;
@@ -36,81 +47,44 @@ socket.on('generatePage', () => {
 });
 
 //Functions
-function slideOutAndChange(container, parent, func) {
+function slideOutAndChange(container, func) {
     container.classList.add('slideOut');
-    container.style.marginTop = '-300px';
+    container.style.marginTop = '-600px';
     setTimeout(() => {
-        while (parent.firstChild) {
-            parent.removeChild(parent.firstChild);
-        }
         func();
-    }, 500);
+    }, 600);
+}
+
+function visible(PromptName, MainMenu, OptionsMenu, StartMenu) {
+    PromptName == true ? containerPromptName.classList.remove('invisible') : containerPromptName.classList.add('invisible');
+    MainMenu == true ? containerMainMenu.classList.remove('invisible') : containerMainMenu.classList.add('invisible');
+    OptionsMenu == true ? containerOptionsMenu.classList.remove('invisible') : containerOptionsMenu.classList.add('invisible');
+    StartMenu == true ? containerStartMenu.classList.remove('invisible') : containerStartMenu.classList.add('invisible');
 }
 
 function promptName() {
-    let container = document.createElement('div');
-    container.classList.add('container');
-    container.id = 'container';
-    body.appendChild(container);
-
-    let containerTitle = document.createElement('label');
-    containerTitle.textContent = 'What is your name?';
-    containerTitle.style.fontSize = '26px';
-    container.appendChild(containerTitle);
-
-    let playerInfoPanel = document.createElement('div');
-    playerInfoPanel.classList.add('playerInfo');
-    container.appendChild(playerInfoPanel);
-
-    let playerNameInput = document.createElement('input');
-    playerNameInput.type = 'text';
-    playerNameInput.classList.add('inputName');
-    playerNameInput.placeholder = 'Your name goes here..';
-    playerNameInput.maxLength = '32';
-    playerInfoPanel.appendChild(playerNameInput);
+    visible(true, false, false, false);
 
     playerNameInput.addEventListener('keypress', (evt) => {
         let keycode = (evt.keyCode ? evt.keyCode : evt.which);
         if (keycode == '13') {
             localStorage.setItem('playerName', playerNameInput.value);
             playerName = localStorage.getItem('playerName');
-            slideOutAndChange(container, body, generatePage);
+            slideOutAndChange(containerPromptName, generatePage);
         }
     });
 }
 
 function generatePage() {
-    let container = document.createElement('div');
-    container.classList.add('container');
-    container.id = 'container';
-    //container.style.height = '300px';
-    body.appendChild(container);
-
-    //Top Row
-    let row = document.createElement('div');
-    row.classList.add('row');
-    row.textContent = 'Welcome back, ' + playerName;
-    row.style.padding = '10px 0';
-    container.appendChild(row);
-
-    let startGame = document.createElement('input');
-    startGame.type = 'button';
-    startGame.value = 'START';
-    startGame.classList.add('menuButton');
-    container.appendChild(startGame);
-
-    let changeHotkeys = document.createElement('input');
-    changeHotkeys.type = 'button';
-    changeHotkeys.value = 'OPTIONS';
-    changeHotkeys.classList.add('menuButton');
-    container.appendChild(changeHotkeys);
+    visible(false, true, false, false);
+    welcome.textContent = 'Welcome back, ' + playerName;
 
     startGame.addEventListener('click', () => {
-        slideOutAndChange(container, body, startGamePage);
+        slideOutAndChange(containerMainMenu, startGamePage);
     });
 
     changeHotkeys.addEventListener('click', () => {
-        slideOutAndChange(container, body, changeHotkeysPage);
+        slideOutAndChange(containerMainMenu, changeHotkeysPage);
     });
 }
 
@@ -208,69 +182,20 @@ function startGamePage() {
 }
 
 function changeHotkeysPage() {
-    let container = document.createElement('div');
-    container.classList.add('container');
-    container.id = 'container';
-    //container.style.height = '300px';
-    body.appendChild(container);
+    visible(false, false, true, false);
 
-    //Top Row
-    let row = document.createElement('div');
-    row.classList.add('row');
-    row.textContent = 'OPTIONS';
-    row.style.padding = '10px 0';
-    container.appendChild(row);
+    displayHotkeyUp.textContent = CONTROLS[0];
+    keyInput.value = CONTROLS[0];
 
-    //Radio Buttons Row
-    let hotKeysRow = document.createElement('div');
-    hotKeysRow.classList.add('row');
-    hotKeysRow.style.textAlign = 'left';
-    hotKeysRow.style.textIndent = '15px';
-    container.appendChild(hotKeysRow);
-
-    //Left Side
-    let hotKeysColumn1 = document.createElement('div');
-    hotKeysColumn1.classList.add('hotKeyColumn1');
-    container.appendChild(hotKeysColumn1);
-
-    let labelUp = document.createElement('label');
-    labelUp.textContent = 'UP';
-    labelUp.classList.add('hotKeyArrow');
-    labelUp.style.top = '5px';
-    hotKeysColumn1.appendChild(labelUp);
-
-    let upArrow = document.createElement('img');
-    upArrow.src = 'images/UpArrow.png';
-    upArrow.classList.add('hotKeyArrow');
-    hotKeysColumn1.appendChild(upArrow);
-
-    //Right Side
-    let hotKeyColumn2 = document.createElement('div');
-    hotKeyColumn2.classList.add('hotKeyColumn2');
-    container.appendChild(hotKeyColumn2);
-
-    let selectUpKey = document.createElement('label');
-    selectUpKey.textContent = CONTROLS[0];
-    selectUpKey.classList.add('displayHotkey');
-    hotKeyColumn2.appendChild(selectUpKey);
+    function hotKeysVisible(HotkeyUp, keyInputUp, applyNewKeyUp) {
+        HotkeyUp == true ? displayHotkeyUp.classList.remove('invisible') : displayHotkeyUp.classList.add('invisible');
+        keyInputUp == true ? keyInput.classList.remove('invisible') : keyInput.classList.add('invisible');
+        applyNewKeyUp == true ? applyNewKey.classList.remove('invisible') : applyNewKey.classList.add('invisible');
+    }
 
     //Clicks to change current key
-    selectUpKey.addEventListener('click', () => {
-        selectUpKey.textContent = '';
-        selectUpKey.style.visibility = 'collapse';
-
-        let applyNewKey = document.createElement('input');
-        applyNewKey.type = 'image';
-        applyNewKey.src = 'images/checkbox.png';
-        applyNewKey.classList.add('hotKeyArrowCheck');
-        hotKeyColumn2.appendChild(applyNewKey);
-
-        let keyInput = document.createElement('input');
-        keyInput.type = 'text';
-        keyInput.value = CONTROLS[0];
-        keyInput.classList.add('keyInput');
-        keyInput.readOnly = 'readonly';
-        hotKeyColumn2.appendChild(keyInput);
+    displayHotkeyUp.addEventListener('click', () => {
+        hotKeysVisible(false, true, true);
 
         //Presses any key on the keyboard to change it
         let previewCONTROLS = [];
@@ -288,11 +213,9 @@ function changeHotkeysPage() {
                 customKeys = true;
             } else {
                 window.removeEventListener('keydown', myKeyDown);
+                displayHotkeyUp.textContent = CONTROLS[0];
 
-                selectUpKey.textContent = CONTROLS[0];
-                hotKeyColumn2.removeChild(applyNewKey);
-                hotKeyColumn2.removeChild(keyInput);
-                selectUpKey.style.visibility = 'visible';
+                hotKeysVisible(true, false, false);
             }
         }
 
@@ -303,15 +226,13 @@ function changeHotkeysPage() {
 
             CONTROLS[0] = previewCONTROLS[0];
             CONTROLSNUMBERS[0] = previewCONTROLSNUMBERS[0];
-            selectUpKey.textContent = CONTROLS[0];
+            displayHotkeyUp.textContent = CONTROLS[0];
 
             localStorage.setItem('Controls', JSON.stringify(CONTROLS));
             localStorage.setItem('ControlsNumbers', JSON.stringify(CONTROLSNUMBERS));
             localStorage.setItem('CustomKeys', true);
 
-            hotKeyColumn2.removeChild(applyNewKey);
-            hotKeyColumn2.removeChild(keyInput);
-            selectUpKey.style.visibility = 'visible';
+            hotKeysVisible(true, false, false);
         });
     });
 }

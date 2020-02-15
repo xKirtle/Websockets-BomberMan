@@ -7,10 +7,20 @@ var body = document.getElementsByTagName('body')[0];
 var playerName = localStorage.getItem('playerName');
 
 //Controls (Up, Down, Left, Right) (https://keycode.info/)
-var WSAD = [87, 83, 65, 68];
-var ARROWS = [38, 40, 37, 39];
-var customKeys = false;
-var CUSTOM = [];
+var customKeys;
+if (localStorage.getItem('CustomKeys') == 'true') {
+    customKeys = localStorage.getItem('CustomKeys');
+} else {
+    customKeys = false;
+}
+
+if (customKeys) {
+    var CONTROLS = JSON.parse(localStorage.getItem('Controls'));
+    var CONTROLSNUMBERS = JSON.parse(localStorage.getItem('ControlsNumbers'));
+} else {
+    var CONTROLS = ['UpArrow', 'DownArrow', 'LeftArrow', 'RightArrow'];
+    var CONTROLSNUMBERS = [87, 83, 65, 68];
+}
 
 //Emit Events
 socket.emit('socketConnection', playerName);
@@ -240,13 +250,12 @@ function changeHotkeysPage() {
     container.appendChild(hotKeyColumn2);
 
     let selectUpKey = document.createElement('label');
-    selectUpKey.textContent = 'DownArrow';
+    selectUpKey.textContent = CONTROLS[0];
     selectUpKey.classList.add('displayHotkey');
     hotKeyColumn2.appendChild(selectUpKey);
 
     //Clicks to change current key
     selectUpKey.addEventListener('click', () => {
-        var previousUpKey = selectUpKey.textContent;
         selectUpKey.textContent = '';
         selectUpKey.style.visibility = 'collapse';
 
@@ -258,12 +267,14 @@ function changeHotkeysPage() {
 
         let keyInput = document.createElement('input');
         keyInput.type = 'text';
-        keyInput.value = 'DownArrow';
+        keyInput.value = CONTROLS[0];
         keyInput.classList.add('keyInput');
         keyInput.readOnly = 'readonly';
         hotKeyColumn2.appendChild(keyInput);
 
         //Presses any key on the keyboard to change it
+        let previewCONTROLS = [];
+        let previewCONTROLSNUMBERS = [];
         var myKeyDown = function (evt) {
             // TODO: Implement a constant of valid accepted keys
 
@@ -271,13 +282,14 @@ function changeHotkeysPage() {
             if (evt.keyCode != '27') {
                 let keyDown = evt.code.replace('Key', '').replace('Digit', '');
                 keyInput.value = keyDown;
-                CUSTOM[0] = evt.keyCode;
+                previewCONTROLS[0] = keyDown;
+                previewCONTROLSNUMBERS[0] = evt.keyCode;
 
                 customKeys = true;
             } else {
                 window.removeEventListener('keydown', myKeyDown);
 
-                selectUpKey.textContent = previousUpKey;
+                selectUpKey.textContent = CONTROLS[0];
                 hotKeyColumn2.removeChild(applyNewKey);
                 hotKeyColumn2.removeChild(keyInput);
                 selectUpKey.style.visibility = 'visible';
@@ -289,7 +301,14 @@ function changeHotkeysPage() {
         applyNewKey.addEventListener('click', () => {
             window.removeEventListener('keydown', myKeyDown);
 
-            selectUpKey.textContent = keyInput.value;
+            CONTROLS[0] = previewCONTROLS[0];
+            CONTROLSNUMBERS[0] = previewCONTROLSNUMBERS[0];
+            selectUpKey.textContent = CONTROLS[0];
+
+            localStorage.setItem('Controls', JSON.stringify(CONTROLS));
+            localStorage.setItem('ControlsNumbers', JSON.stringify(CONTROLSNUMBERS));
+            localStorage.setItem('CustomKeys', true);
+
             hotKeyColumn2.removeChild(applyNewKey);
             hotKeyColumn2.removeChild(keyInput);
             selectUpKey.style.visibility = 'visible';

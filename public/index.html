@@ -30,14 +30,27 @@
     <div class="container invisible" id="containerOptionsMenu">
         <div class="row" style="padding: 10px 0px;">OPTIONS</div>
         <div class="row" style="text-align: left; text-indent: 15px;"></div>
-        <div class="hotKeyColumn1">
-            <label class="hotKeyArrow" style="top: 5px;">UP</label>
-            <img src="images/UpArrow.png" class="hotKeyArrow" />
+        <div id="up">
+            <div class="hotKeyColumn1">
+                <label class="hotKeyArrow" style="top: 5px;">UP</label>
+                <img src="images/UpArrow.png" class="hotKeyArrow" />
+            </div>
+            <div class="hotKeyColumn2">
+                <label class="displayHotkey" id="displayHotkeyUp"></label>
+                <input type="image" src="images/checkbox.png" class="hotKeyArrowCheck invisible" id="applyNewKeyUp" />
+                <input type="text" value="" class="keyInput invisible" id="keyInputUp" readonly="readonly" />
+            </div>
         </div>
-        <div class="hotKeyColumn2">
-            <label class="displayHotkey" id="displayHotkey"></label>
-            <input type="image" src="images/checkbox.png" class="hotKeyArrowCheck invisible" id="applyNewKey" />
-            <input type="text" value="" class="keyInput invisible" id="keyInput" readonly="readonly" />
+        <div id="down">
+            <div class="hotKeyColumn1">
+                <label class="hotKeyArrow" style="top: 5px;">DOWN</label>
+                <img src="images/DownArrow.png" class="hotKeyArrow" />
+            </div>
+            <div class="hotKeyColumn2">
+                <label class="displayHotkey" id="displayHotkeyDown"></label>
+                <input type="image" src="images/checkbox.png" class="hotKeyArrowCheck invisible" id="applyNewKeyDown" />
+                <input type="text" value="" class="keyInput invisible" id="keyInputDown" readonly="readonly" />
+            </div>
         </div>
     </div>
 

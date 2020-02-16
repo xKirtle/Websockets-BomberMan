@@ -13,9 +13,12 @@ var welcome = document.getElementById('welcome');
 var playerNameInput = document.getElementById('inputName');
 var startGame = document.getElementById('startGame');
 var changeHotkeys = document.getElementById('changeHotkeys');
-var displayHotkeyUp = document.getElementById('displayHotkey');
-var keyInput = document.getElementById('keyInput');
-var applyNewKey = document.getElementById('applyNewKey');
+var displayHotkeyUp = document.getElementById('displayHotkeyUp');
+var displayHotkeyDown = document.getElementById('displayHotkeyDown');
+var keyInputUp = document.getElementById('keyInputUp');
+var keyInputDown = document.getElementById('keyInputDown');
+var applyNewKeyUp = document.getElementById('applyNewKeyUp');
+var applyNewKeyDown = document.getElementById('applyNewKeyDown');
 
 //Controls (Up, Down, Left, Right) (https://keycode.info/)
 var customKeys;
@@ -185,17 +188,31 @@ function changeHotkeysPage() {
     visible(false, false, true, false);
 
     displayHotkeyUp.textContent = CONTROLS[0];
-    keyInput.value = CONTROLS[0];
+    displayHotkeyDown.textContent = CONTROLS[1];
+    keyInputUp.value = CONTROLS[0];
+    keyInputDown.value = CONTROLS[1];
 
-    function hotKeysVisible(HotkeyUp, keyInputUp, applyNewKeyUp) {
-        HotkeyUp == true ? displayHotkeyUp.classList.remove('invisible') : displayHotkeyUp.classList.add('invisible');
-        keyInputUp == true ? keyInput.classList.remove('invisible') : keyInput.classList.add('invisible');
-        applyNewKeyUp == true ? applyNewKey.classList.remove('invisible') : applyNewKey.classList.add('invisible');
+    function hotKeysVisible(Key, DisplayHotKey, KeyInput, ApplyNewKey) {
+        switch (Key) {
+            case 'up':
+                DisplayHotKey == true ? displayHotkeyUp.classList.remove('invisible') : displayHotkeyUp.classList.add('invisible');
+                KeyInput == true ? keyInputUp.classList.remove('invisible') : keyInputUp.classList.add('invisible');
+                ApplyNewKey == true ? applyNewKeyUp.classList.remove('invisible') : applyNewKeyUp.classList.add('invisible');
+                break;
+            case 'down':
+                DisplayHotKey == true ? displayHotkeyDown.classList.remove('invisible') : displayHotkeyDown.classList.add('invisible');
+                KeyInput == true ? keyInputDown.classList.remove('invisible') : keyInputDown.classList.add('invisible');
+                ApplyNewKey == true ? applyNewKeyDown.classList.remove('invisible') : applyNewKeyDown.classList.add('invisible');
+                break;
+            case 'left':
+                break;
+            case 'right':
+                break;
+        }
     }
 
-    //Clicks to change current key
-    displayHotkeyUp.addEventListener('click', () => {
-        hotKeysVisible(false, true, true);
+    function displayClickEvent(Key, Index, displayHotkey, keyInput, applyNewKey) {
+        hotKeysVisible(Key, false, true, true);
 
         //Presses any key on the keyboard to change it
         let previewCONTROLS = [];
@@ -203,36 +220,44 @@ function changeHotkeysPage() {
         var myKeyDown = function (evt) {
             // TODO: Implement a constant of valid accepted keys
 
-            //Escape
+            //!Escape
             if (evt.keyCode != '27') {
                 let keyDown = evt.code.replace('Key', '').replace('Digit', '');
                 keyInput.value = keyDown;
-                previewCONTROLS[0] = keyDown;
-                previewCONTROLSNUMBERS[0] = evt.keyCode;
+                previewCONTROLS[Index] = keyDown;
+                previewCONTROLSNUMBERS[Index] = evt.keyCode;
 
                 customKeys = true;
             } else {
                 window.removeEventListener('keydown', myKeyDown);
-                displayHotkeyUp.textContent = CONTROLS[0];
+                displayHotkey.textContent = CONTROLS[Index];
 
-                hotKeysVisible(true, false, false);
+                hotKeysVisible(Key, true, false, false);
             }
         }
 
         window.addEventListener('keydown', myKeyDown);
-
         applyNewKey.addEventListener('click', () => {
             window.removeEventListener('keydown', myKeyDown);
 
-            CONTROLS[0] = previewCONTROLS[0];
-            CONTROLSNUMBERS[0] = previewCONTROLSNUMBERS[0];
-            displayHotkeyUp.textContent = CONTROLS[0];
+            CONTROLS[Index] = previewCONTROLS[Index];
+            CONTROLSNUMBERS[Index] = previewCONTROLSNUMBERS[Index];
+            displayHotkey.textContent = CONTROLS[Index];
 
             localStorage.setItem('Controls', JSON.stringify(CONTROLS));
             localStorage.setItem('ControlsNumbers', JSON.stringify(CONTROLSNUMBERS));
             localStorage.setItem('CustomKeys', true);
 
-            hotKeysVisible(true, false, false);
+            hotKeysVisible(Key, true, false, false);
         });
+    }
+
+    //Clicks to change current key
+    displayHotkeyUp.addEventListener('click', () => {
+        displayClickEvent('up', 0, displayHotkeyUp, keyInputUp, applyNewKeyUp);
+    });
+
+    displayHotkeyDown.addEventListener('click', () => {
+        displayClickEvent('down', 1, displayHotkeyDown, keyInputDown, applyNewKeyDown);
     });
 }

@@ -14,19 +14,20 @@ var playerNameInput = document.getElementById('inputName');
 var startGame = document.getElementById('startGame');
 var changeHotkeys = document.getElementById('changeHotkeys');
 var displayHotkeyUp = document.getElementById('displayHotkeyUp');
-var displayHotkeyDown = document.getElementById('displayHotkeyDown');
 var keyInputUp = document.getElementById('keyInputUp');
-var keyInputDown = document.getElementById('keyInputDown');
 var applyNewKeyUp = document.getElementById('applyNewKeyUp');
+var displayHotkeyDown = document.getElementById('displayHotkeyDown');
+var keyInputDown = document.getElementById('keyInputDown');
 var applyNewKeyDown = document.getElementById('applyNewKeyDown');
+var displayHotkeyLeft = document.getElementById('displayHotkeyLeft');
+var keyInputLeft = document.getElementById('keyInputLeft');
+var applyNewKeyLeft = document.getElementById('applyNewKeyLeft');
+var displayHotkeyRight = document.getElementById('displayHotkeyRight');
+var keyInputRight = document.getElementById('keyInputRight');
+var applyNewKeyRight = document.getElementById('applyNewKeyRight');
 
 //Controls (Up, Down, Left, Right) (https://keycode.info/)
-var customKeys;
-if (localStorage.getItem('CustomKeys') == 'true') {
-    customKeys = localStorage.getItem('CustomKeys');
-} else {
-    customKeys = false;
-}
+var customKeys = localStorage.getItem('CustomKeys') == 'true' ? localStorage.getItem('CustomKeys') : false;
 
 if (customKeys) {
     var CONTROLS = JSON.parse(localStorage.getItem('Controls'));
@@ -189,8 +190,12 @@ function changeHotkeysPage() {
 
     displayHotkeyUp.textContent = CONTROLS[0];
     displayHotkeyDown.textContent = CONTROLS[1];
+    displayHotkeyLeft.textContent = CONTROLS[2];
+    displayHotkeyRight.textContent = CONTROLS[3];
     keyInputUp.value = CONTROLS[0];
     keyInputDown.value = CONTROLS[1];
+    keyInputLeft.value = CONTROLS[2];
+    keyInputRight.value = CONTROLS[3];
 
     function hotKeysVisible(Key, DisplayHotKey, KeyInput, ApplyNewKey) {
         switch (Key) {
@@ -205,12 +210,19 @@ function changeHotkeysPage() {
                 ApplyNewKey == true ? applyNewKeyDown.classList.remove('invisible') : applyNewKeyDown.classList.add('invisible');
                 break;
             case 'left':
+                DisplayHotKey == true ? displayHotkeyLeft.classList.remove('invisible') : displayHotkeyLeft.classList.add('invisible');
+                KeyInput == true ? keyInputLeft.classList.remove('invisible') : keyInputLeft.classList.add('invisible');
+                ApplyNewKey == true ? applyNewKeyLeft.classList.remove('invisible') : applyNewKeyLeft.classList.add('invisible');
                 break;
             case 'right':
+                DisplayHotKey == true ? displayHotkeyRight.classList.remove('invisible') : displayHotkeyRight.classList.add('invisible');
+                KeyInput == true ? keyInputRight.classList.remove('invisible') : keyInputRight.classList.add('invisible');
+                ApplyNewKey == true ? applyNewKeyRight.classList.remove('invisible') : applyNewKeyRight.classList.add('invisible');
                 break;
         }
     }
 
+    // TODO: Prevent duplicate keys
     function displayClickEvent(Key, Index, displayHotkey, keyInput, applyNewKey) {
         hotKeysVisible(Key, false, true, true);
 
@@ -260,4 +272,13 @@ function changeHotkeysPage() {
     displayHotkeyDown.addEventListener('click', () => {
         displayClickEvent('down', 1, displayHotkeyDown, keyInputDown, applyNewKeyDown);
     });
+
+    displayHotkeyLeft.addEventListener('click', () => {
+        displayClickEvent('left', 2, displayHotkeyLeft, keyInputLeft, applyNewKeyLeft);
+    });
+
+    displayHotkeyRight.addEventListener('click', () => {
+        displayClickEvent('right', 3, displayHotkeyRight, keyInputRight, applyNewKeyRight);
+    })
+    ''
 }

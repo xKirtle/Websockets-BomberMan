@@ -35,7 +35,7 @@
                 <label class="hotKeyArrow" style="top: 5px;">UP</label>
                 <img src="images/UpArrow.png" class="hotKeyArrow" />
             </div>
-            <div class="hotKeyColumn2">
+            <div class="hotKeyColumn2 keyHover">
                 <label class="displayHotkey" id="displayHotkeyUp"></label>
                 <input type="image" src="images/checkbox.png" class="hotKeyArrowCheck invisible" id="applyNewKeyUp" />
                 <input type="text" value="" class="keyInput invisible" id="keyInputUp" readonly="readonly" />
@@ -46,10 +46,33 @@
                 <label class="hotKeyArrow" style="top: 5px;">DOWN</label>
                 <img src="images/DownArrow.png" class="hotKeyArrow" />
             </div>
-            <div class="hotKeyColumn2">
+            <div class="hotKeyColumn2 keyHover">
                 <label class="displayHotkey" id="displayHotkeyDown"></label>
                 <input type="image" src="images/checkbox.png" class="hotKeyArrowCheck invisible" id="applyNewKeyDown" />
                 <input type="text" value="" class="keyInput invisible" id="keyInputDown" readonly="readonly" />
+            </div>
+        </div>
+        <div id="left">
+            <div class="hotKeyColumn1">
+                <label class="hotKeyArrow" style="top: 5px;">LEFT</label>
+                <img src="images/LeftArrow.png" class="hotKeyArrow" />
+            </div>
+            <div class="hotKeyColumn2 keyHover">
+                <label class="displayHotkey" id="displayHotkeyLeft"></label>
+                <input type="image" src="images/checkbox.png" class="hotKeyArrowCheck invisible" id="applyNewKeyLeft" />
+                <input type="text" value="" class="keyInput invisible" id="keyInputLeft" readonly="readonly" />
+            </div>
+        </div>
+        <div id="right">
+            <div class="hotKeyColumn1">
+                <label class="hotKeyArrow" style="top: 5px;">RIGHT</label>
+                <img src="images/RightArrow.png" class="hotKeyArrow" />
+            </div>
+            <div class="hotKeyColumn2 keyHover" id="columnRight">
+                <label class="displayHotkey" id="displayHotkeyRight"></label>
+                <input type="image" src="images/checkbox.png" class="hotKeyArrowCheck invisible"
+                    id="applyNewKeyRight" />
+                <input type="text" value="" class="keyInput invisible" id="keyInputRight" readonly="readonly" />
             </div>
         </div>
     </div>

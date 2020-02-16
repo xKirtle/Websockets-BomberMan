@@ -199,11 +199,13 @@ input {
     background-color: #ccc;
 }
 
-.displayHotkey:hover {
-    background-color: #aaa;
-    border-radius: 3px;
+.keyHover:hover {
+    margin-left: 1px;
+    width: 69.7%;
+    text-align: center;
+    background-color: #444;
+    box-shadow: -1px -1px white, 0px 1px white;
 }
-
 
 .hotKeyArrow {
     height: 30px;

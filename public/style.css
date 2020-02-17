@@ -191,33 +191,34 @@ input {
     background-color: #d00;
 }
 
-#red:hover {
+/* #red:hover {
     background-color: #a00;
-}
+    red.style.filter = 'brightness(75%)';
+} */
 
 #blue {
     background-color: #00d;
 }
 
-#blue:hover {
+/* #blue:hover {
     background-color: #00a;
-}
+} */
 
 #pink {
     background-color: #d0d;
 }
 
-#pink:hover {
+/* #pink:hover {
     background-color: #a0a;
-}
+} */
 
 #gray {
     background-color: #999;
 }
 
-#gray:hover {
+/* #gray:hover {
     background-color: #777;
-}
+} */
 
 .fourRows {
     height: 50.5px;
@@ -256,10 +257,27 @@ input {
 .left {
     float: left;
     width: 30%;
+    box-shadow: 0 1px white;
 }
 
 .right {
     float: left;
     width: 70%;
     box-shadow: 1px 1px white, -1px -1px white;
+}
+
+#joinRoom {
+    position: relative;
+    right: 20px;
+}
+
+#lobbyFinderRoom>input[type=number] {
+    background-color: transparent;
+    color: white;
+    text-align: center;
+}
+
+.borderBottom {
+    box-shadow: 0 1px white;
+    font-size: 24px;
 }

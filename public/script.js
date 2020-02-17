@@ -37,11 +37,19 @@ var keyInputSpace = document.getElementById('keyInputSpace');
 var applyNewKeySpace = document.getElementById('applyNewKeySpace');
 //Go back button Options Menu
 var optionsGoBack = document.getElementById('OptionsGoBack');
+//Lobby Menu
+var joinRoomInputNumber = document.getElementById('joinRoomInputNumber');
+var joinRoom = document.getElementById('joinRoom');
+var lobbyRooms = document.getElementById('lobbyRooms');
+var lobbyRoomsPlayerCount = document.getElementById('lobbyRoomsPlayerCount');
+var startMenuRoom = document.getElementById('startMenuRoom');
+var lobbyFinderRoom = document.getElementById('lobbyFinderRoom');
 //playerNames on Start Menu
 var playerNameRed = document.getElementById('playerNameRed');
 var playerNameBlue = document.getElementById('playerNameBlue');
 var playerNamePink = document.getElementById('playerNamePink');
 var playerNameGray = document.getElementById('playerNameGray');
+var playerReadyCount = document.getElementById('playerReadyCount');
 //Character Selection
 var red = document.getElementById('red');
 var blue = document.getElementById('blue');
@@ -69,8 +77,35 @@ socket.on('promptName', () => {
     promptName();
 });
 
-socket.on('generatePage', () => {
+socket.on('generatePage', (gameRooms) => {
     generatePage();
+    updateLobbyRooms(gameRooms);
+});
+
+socket.on('joinRoom', () => {
+    slideOutAndChange(containerStartMenu, startGamePage);
+    setTimeout(() => {
+        lobbyFinderRoom.classList.add('invisible');
+        startMenuRoom.classList.remove('invisible');
+    }, 600);
+});
+
+socket.on('leaveRoom', () => {
+    slideOutAndChange(containerStartMenu, startGamePage);
+    setTimeout(() => {
+        startMenuRoom.classList.add('invisible');
+        lobbyFinderRoom.classList.remove('invisible');
+    }, 600);
+});
+
+socket.on('updateLobbyRooms', (gameRooms) => {
+    updateLobbyRooms(gameRooms);
+});
+
+socket.on('updatePlayerCount', (roomCount) => {
+    // TODO: Change below
+    //Updating the Ready count right now..
+    playerReadyCount.value = roomCount + '/4';
 });
 
 //Functions
@@ -91,6 +126,27 @@ function visible(PromptName, MainMenu, OptionsMenu, StartMenu) {
     MainMenu == true ? containerMainMenu.classList.remove('invisible') : containerMainMenu.classList.add('invisible');
     OptionsMenu == true ? containerOptionsMenu.classList.remove('invisible') : containerOptionsMenu.classList.add('invisible');
     StartMenu == true ? containerStartMenu.classList.remove('invisible') : containerStartMenu.classList.add('invisible');
+}
+
+function updateLobbyRooms(gameRooms) {
+    //Removes everything from the list
+    while (lobbyRooms.firstChild && lobbyRoomsPlayerCount.firstChild) {
+        lobbyRooms.removeChild(lobbyRooms.firstChild);
+        lobbyRoomsPlayerCount.removeChild(lobbyRoomsPlayerCount.firstChild);
+    }
+
+    //Populates the list again
+    for (let i = 0; i < gameRooms.length; i++) {
+        let div = document.createElement('div');
+        div.classList.add('borderBottom');
+        div.textContent = 'Room ' + gameRooms[i].roomNumber;
+        lobbyRooms.appendChild(div);
+
+        let div2 = document.createElement('div');
+        div2.classList.add('borderBottom');
+        div2.textContent = gameRooms[i].roomCount + '/4';
+        lobbyRoomsPlayerCount.appendChild(div2);
+    }
 }
 
 function promptName() {
@@ -123,8 +179,20 @@ function generatePage() {
 function startGamePage() {
     visible(false, false, false, true);
 
-    red.addEventListener('click', () => {
+    joinRoomInputNumber.addEventListener('input', function () {
+        this.value = Math.abs(this.value.replace(/[^0-9]/g, '').slice(0, this.maxLength));
+    });
+    joinRoom.addEventListener('click', () => {
+        socket.emit('joinRoom', {
+            roomNumber: joinRoomInputNumber.value,
+            playerName: playerName
+        });
+    });
 
+    red.addEventListener('click', () => {
+        selectChar();
+        //Removes last character selected, if any
+        //playerNameRed.textContent = playerName;
     });
 
     blue.addEventListener('click', () => {
@@ -138,6 +206,10 @@ function startGamePage() {
     gray.addEventListener('click', () => {
 
     });
+
+    function selectChar() {
+
+    }
 }
 
 function optionsMenuPage() {

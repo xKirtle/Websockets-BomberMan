@@ -93,40 +93,52 @@
 
     <!-- Start Menu -->
     <div class="container invisible" id="containerStartMenu">
-        <div class="left">
-            <div class="row" style="padding: 9.5px 0px;">PLAYERS</div>
-            <div class="fourRows" id="playerNameRed">Player1</div>
-            <div class="fourRows" id="playerNameBlue">Player2</div>
-            <div class="fourRows" id="playerNamePink">Player3</div>
-            <div class="fourRows" id="playerNameGray">Player4</div>
+        <div class="invisible" id="startMenuRoom">
+            <div class="left">
+                <div class="row" style="padding: 9.5px 0px;">PLAYERS</div>
+                <div class="fourRows" id="playerNameRed">Player1</div>
+                <div class="fourRows" id="playerNameBlue">Player2</div>
+                <div class="fourRows" id="playerNamePink">Player3</div>
+                <div class="fourRows" id="playerNameGray">Player4</div>
+            </div>
+            <div class="right">
+                <div class=" row" style="padding: 10px 0px;">CHOOSE A CHARACTER</div>
+                <div class="row">
+                    <div class="characterSelection" id="red">
+                        <input type="radio" name="characterSelection" value="Red" />
+                    </div>
+                    <div class="characterSelection" id="blue">
+                        <input type="radio" name="characterSelection" value="Blue" />
+                    </div>
+                    <div class="characterSelection" id="pink">
+                        <input type="radio" name="characterSelection" value="Pink" />
+                    </div>
+                    <div class="characterSelection" id="gray">
+                        <input type="radio" name="characterSelection" value="Gray" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="threeColumns">
+                        <input type="text" value="0/4" class="startMenuButtons" readonly id="playerReadyCount" />
+                    </div>
+                    <div class="threeColumns">
+                        <input type="button" value="Ready" class="startMenuButtons" />
+                    </div>
+                    <div class="threeColumns">
+                        <input type="button" value="Leave" class="startMenuButtons" />
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="right">
-            <div class=" row" style="padding: 10px 0px;">CHOOSE A CHARACTER</div>
-            <div class="row">
-                <div class="characterSelection" id="red">
-                    <input type="radio" name="characterSelection" value="Red" />
-                </div>
-                <div class="characterSelection" id="blue">
-                    <input type="radio" name="characterSelection" value="Blue" />
-                </div>
-                <div class="characterSelection" id="pink">
-                    <input type="radio" name="characterSelection" value="Pink" />
-                </div>
-                <div class="characterSelection" id="gray">
-                    <input type="radio" name="characterSelection" value="Gray" />
-                </div>
+        <div id="lobbyFinderRoom">
+            <div class="right" id="lobbyRooms">
+                <div class="borderBottom"></div>
             </div>
-            <div class="row">
-                <div class="threeColumns">
-                    <input type="text" value="0/4" class="startMenuButtons" readonly id="playerReadyCount" />
-                </div>
-                <div class="threeColumns">
-                    <input type="button" value="Ready" class="startMenuButtons" />
-                </div>
-                <div class="threeColumns">
-                    <input type="button" value="Leave" class="startMenuButtons" />
-                </div>
+            <div class="left" id="lobbyRoomsPlayerCount">
+                <div class="borderBottom"></div>
             </div>
+            <input type="number" class="menuButton" id="joinRoomInputNumber" value="0" maxlength="3" />
+            <input type="button" class="menuButton" id="joinRoom" value="Join Room" />
         </div>
     </div>
 </body>

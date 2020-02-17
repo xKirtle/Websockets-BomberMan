@@ -22,8 +22,8 @@
     <!-- Main Menu -->
     <div class="container invisible" id="containerMainMenu">
         <div class="row" style="padding: 10px 0px;" id="welcome">Welcome back, Kirtle</div>
-        <input type="button" value="START" class="menuButton" id="startGame">
-        <input type="button" value="OPTIONS" class="menuButton" id="changeHotkeys">
+        <input type="button" value="Start" class="menuButton" id="startGame">
+        <input type="button" value="Options" class="menuButton" id="optionsMenu">
     </div>
 
     <!-- Options Menu -->
@@ -32,7 +32,7 @@
         <div class="row" style="text-align: left; text-indent: 15px;"></div>
         <div id="up">
             <div class="hotKeyColumn1">
-                <label class="hotKeyArrow" style="top: 5px;">UP</label>
+                <label class="hotKeyArrow" style="top: 5px;"></label>
                 <img src="images/UpArrow.png" class="hotKeyArrow" />
             </div>
             <div class="hotKeyColumn2 keyHover">
@@ -43,7 +43,7 @@
         </div>
         <div id="down">
             <div class="hotKeyColumn1">
-                <label class="hotKeyArrow" style="top: 5px;">DOWN</label>
+                <label class="hotKeyArrow" style="top: 5px;"></label>
                 <img src="images/DownArrow.png" class="hotKeyArrow" />
             </div>
             <div class="hotKeyColumn2 keyHover">
@@ -54,7 +54,7 @@
         </div>
         <div id="left">
             <div class="hotKeyColumn1">
-                <label class="hotKeyArrow" style="top: 5px;">LEFT</label>
+                <label class="hotKeyArrow" style="top: 5px;"></label>
                 <img src="images/LeftArrow.png" class="hotKeyArrow" />
             </div>
             <div class="hotKeyColumn2 keyHover">
@@ -65,7 +65,7 @@
         </div>
         <div id="right">
             <div class="hotKeyColumn1">
-                <label class="hotKeyArrow" style="top: 5px;">RIGHT</label>
+                <label class="hotKeyArrow" style="top: 5px;"></label>
                 <img src="images/RightArrow.png" class="hotKeyArrow" />
             </div>
             <div class="hotKeyColumn2 keyHover" id="columnRight">
@@ -75,10 +75,60 @@
                 <input type="text" value="" class="keyInput invisible" id="keyInputRight" readonly="readonly" />
             </div>
         </div>
+        <div id="space">
+            <div class="hotKeyColumn1">
+                <label class="hotKeyArrow" style="top: 5px;"></label>
+                <img src="images/Spacebar.png" class="hotKeyArrow" />
+            </div>
+            <div class="hotKeyColumn2 keyHover" id="columnRight">
+                <label class="displayHotkey" id="displayHotkeySpace"></label>
+                <input type="image" src="images/checkbox.png" class="hotKeyArrowCheck invisible"
+                    id="applyNewKeySpace" />
+                <input type="text" value="" class="keyInput invisible" id="keyInputSpace" readonly="readonly" />
+            </div>
+        </div>
+
+        <input type="button" value="Go Back" class="menuButton" id="OptionsGoBack" />
     </div>
 
     <!-- Start Menu -->
-    <div id="containerStartMenu"></div>
+    <div class="container invisible" id="containerStartMenu">
+        <div class="left">
+            <div class="row" style="padding: 9.5px 0px;">PLAYERS</div>
+            <div class="fourRows" id="playerNameRed">Player1</div>
+            <div class="fourRows" id="playerNameBlue">Player2</div>
+            <div class="fourRows" id="playerNamePink">Player3</div>
+            <div class="fourRows" id="playerNameGray">Player4</div>
+        </div>
+        <div class="right">
+            <div class=" row" style="padding: 10px 0px;">CHOOSE A CHARACTER</div>
+            <div class="row">
+                <div class="characterSelection" id="red">
+                    <input type="radio" name="characterSelection" value="Red" />
+                </div>
+                <div class="characterSelection" id="blue">
+                    <input type="radio" name="characterSelection" value="Blue" />
+                </div>
+                <div class="characterSelection" id="pink">
+                    <input type="radio" name="characterSelection" value="Pink" />
+                </div>
+                <div class="characterSelection" id="gray">
+                    <input type="radio" name="characterSelection" value="Gray" />
+                </div>
+            </div>
+            <div class="row">
+                <div class="threeColumns">
+                    <input type="text" value="0/4" class="startMenuButtons" readonly id="playerReadyCount" />
+                </div>
+                <div class="threeColumns">
+                    <input type="button" value="Ready" class="startMenuButtons" />
+                </div>
+                <div class="threeColumns">
+                    <input type="button" value="Leave" class="startMenuButtons" />
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 <script src="script.js"></script>
 

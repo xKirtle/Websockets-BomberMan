@@ -5,36 +5,59 @@ var socket = io.connect();
 //DOM QUERIES
 var playerName = localStorage.getItem('playerName');
 var body = document.getElementsByTagName('body')[0];
+//Containers
 var containerPromptName = document.getElementById('containerPromptName');
 var containerMainMenu = document.getElementById('containerMainMenu');
 var containerOptionsMenu = document.getElementById('containerOptionsMenu');
 var containerStartMenu = document.getElementById('containerStartMenu');
+//Welcome message row
 var welcome = document.getElementById('welcome');
 var playerNameInput = document.getElementById('inputName');
 var startGame = document.getElementById('startGame');
-var changeHotkeys = document.getElementById('changeHotkeys');
+var optionsMenu = document.getElementById('optionsMenu');
+//Hotkey Up
 var displayHotkeyUp = document.getElementById('displayHotkeyUp');
 var keyInputUp = document.getElementById('keyInputUp');
 var applyNewKeyUp = document.getElementById('applyNewKeyUp');
+//Hotkey Down
 var displayHotkeyDown = document.getElementById('displayHotkeyDown');
 var keyInputDown = document.getElementById('keyInputDown');
 var applyNewKeyDown = document.getElementById('applyNewKeyDown');
+//Hotkey Left
 var displayHotkeyLeft = document.getElementById('displayHotkeyLeft');
 var keyInputLeft = document.getElementById('keyInputLeft');
 var applyNewKeyLeft = document.getElementById('applyNewKeyLeft');
+//Hotkey Right
 var displayHotkeyRight = document.getElementById('displayHotkeyRight');
 var keyInputRight = document.getElementById('keyInputRight');
 var applyNewKeyRight = document.getElementById('applyNewKeyRight');
+//Hotkey Space
+var displayHotKeySpace = document.getElementById('displayHotkeySpace');
+var keyInputSpace = document.getElementById('keyInputSpace');
+var applyNewKeySpace = document.getElementById('applyNewKeySpace');
+//Go back button Options Menu
+var optionsGoBack = document.getElementById('OptionsGoBack');
+//playerNames on Start Menu
+var playerNameRed = document.getElementById('playerNameRed');
+var playerNameBlue = document.getElementById('playerNameBlue');
+var playerNamePink = document.getElementById('playerNamePink');
+var playerNameGray = document.getElementById('playerNameGray');
+//Character Selection
+var red = document.getElementById('red');
+var blue = document.getElementById('blue');
+var pink = document.getElementById('pink');
+var gray = document.getElementById('gray');
 
-//Controls (Up, Down, Left, Right) (https://keycode.info/)
+
+//Controls (Up, Down, Left, Right, Space) (https://keycode.info/)
 var customKeys = localStorage.getItem('CustomKeys') == 'true' ? localStorage.getItem('CustomKeys') : false;
 
 if (customKeys) {
     var CONTROLS = JSON.parse(localStorage.getItem('Controls'));
     var CONTROLSNUMBERS = JSON.parse(localStorage.getItem('ControlsNumbers'));
 } else {
-    var CONTROLS = ['UpArrow', 'DownArrow', 'LeftArrow', 'RightArrow'];
-    var CONTROLSNUMBERS = [87, 83, 65, 68];
+    var CONTROLS = ['UpArrow', 'DownArrow', 'LeftArrow', 'RightArrow', 'Space'];
+    var CONTROLSNUMBERS = [87, 83, 65, 68, 32];
 }
 
 //Emit Events
@@ -56,6 +79,10 @@ function slideOutAndChange(container, func) {
     container.style.marginTop = '-600px';
     setTimeout(() => {
         func();
+    }, 600);
+    setTimeout(() => {
+        container.classList.remove('slideOut');
+        container.style.marginTop = '20px';
     }, 600);
 }
 
@@ -81,121 +108,51 @@ function promptName() {
 
 function generatePage() {
     visible(false, true, false, false);
+    containerMainMenu.classList.remove('slideOut');
     welcome.textContent = 'Welcome back, ' + playerName;
 
     startGame.addEventListener('click', () => {
         slideOutAndChange(containerMainMenu, startGamePage);
     });
 
-    changeHotkeys.addEventListener('click', () => {
-        slideOutAndChange(containerMainMenu, changeHotkeysPage);
+    optionsMenu.addEventListener('click', () => {
+        slideOutAndChange(containerMainMenu, optionsMenuPage);
     });
 }
 
 function startGamePage() {
-    let container = document.createElement('div');
-    container.classList.add('container');
-    container.id = 'container';
-    //container.style.height = '300px';
-    body.appendChild(container);
+    visible(false, false, false, true);
 
-    //Top Row
-    let row = document.createElement('div');
-    row.classList.add('row');
-    row.textContent = 'CHOOSE A CHARACTER';
-    row.style.padding = '10px 0';
-    container.appendChild(row);
+    red.addEventListener('click', () => {
 
-    //Radio Buttons Row
-    let colorsRow = document.createElement('div');
-    colorsRow.classList.add('row');
+    });
 
-    //Radio button Red
-    let labelRadio1 = document.createElement('label');
-    labelRadio1.textContent = "Red";
-    labelRadio1.classList.add('rowColor');
+    blue.addEventListener('click', () => {
 
-    let color1Radio = document.createElement('input');
-    color1Radio.type = 'radio';
-    color1Radio.name = 'color';
-    color1Radio.value = 'Red';
+    });
 
-    let color1Span = document.createElement('span');
-    color1Span.classList.add('radio');
-    color1Span.classList.add('red');
+    pink.addEventListener('click', () => {
 
-    labelRadio1.appendChild(color1Radio);
-    labelRadio1.appendChild(color1Span);
-    colorsRow.appendChild(labelRadio1);
+    });
 
-    //Radio button Blue
-    let labelRadio2 = document.createElement('label');
-    labelRadio2.textContent = "Blue";
-    labelRadio2.classList.add('rowColor');
+    gray.addEventListener('click', () => {
 
-    let color2Radio = document.createElement('input');
-    color2Radio.type = 'radio';
-    color2Radio.name = 'color';
-    color2Radio.value = 'Blue';
-
-    let color2Span = document.createElement('span');
-    color2Span.classList.add('radio');
-    color2Span.classList.add('blue');
-
-    labelRadio2.appendChild(color2Radio);
-    labelRadio2.appendChild(color2Span);
-    colorsRow.appendChild(labelRadio2);
-
-    //Radio button Pink
-    let labelRadio3 = document.createElement('label');
-    labelRadio3.textContent = "Pink";
-    labelRadio3.classList.add('rowColor');
-
-    let color3Radio = document.createElement('input');
-    color3Radio.type = 'radio';
-    color3Radio.name = 'color';
-    color3Radio.value = 'Pink';
-
-    let color3Span = document.createElement('span');
-    color3Span.classList.add('radio');
-    color3Span.classList.add('pink');
-
-    labelRadio3.appendChild(color3Radio);
-    labelRadio3.appendChild(color3Span);
-    colorsRow.appendChild(labelRadio3);
-
-    //Radio button Green
-    let labelRadio4 = document.createElement('label');
-    labelRadio4.textContent = "Gray";
-    labelRadio4.classList.add('rowColor');
-
-    let color4Radio = document.createElement('input');
-    color4Radio.type = 'radio';
-    color4Radio.name = 'color';
-    color4Radio.value = 'Gray';
-
-    let color4Span = document.createElement('span');
-    color4Span.classList.add('radio');
-    color4Span.classList.add('gray');
-
-    labelRadio4.appendChild(color4Radio);
-    labelRadio4.appendChild(color4Span);
-    colorsRow.appendChild(labelRadio4);
-
-    container.appendChild(colorsRow);
+    });
 }
 
-function changeHotkeysPage() {
+function optionsMenuPage() {
     visible(false, false, true, false);
 
     displayHotkeyUp.textContent = CONTROLS[0];
     displayHotkeyDown.textContent = CONTROLS[1];
     displayHotkeyLeft.textContent = CONTROLS[2];
     displayHotkeyRight.textContent = CONTROLS[3];
+    displayHotKeySpace.textContent = CONTROLS[4];
     keyInputUp.value = CONTROLS[0];
     keyInputDown.value = CONTROLS[1];
     keyInputLeft.value = CONTROLS[2];
     keyInputRight.value = CONTROLS[3];
+    keyInputSpace.value = CONTROLS[4];
 
     function hotKeysVisible(Key, DisplayHotKey, KeyInput, ApplyNewKey) {
         switch (Key) {
@@ -219,6 +176,11 @@ function changeHotkeysPage() {
                 KeyInput == true ? keyInputRight.classList.remove('invisible') : keyInputRight.classList.add('invisible');
                 ApplyNewKey == true ? applyNewKeyRight.classList.remove('invisible') : applyNewKeyRight.classList.add('invisible');
                 break;
+            case 'space':
+                DisplayHotKey == true ? displayHotkeySpace.classList.remove('invisible') : displayHotkeySpace.classList.add('invisible');
+                KeyInput == true ? keyInputSpace.classList.remove('invisible') : keyInputSpace.classList.add('invisible');
+                ApplyNewKey == true ? applyNewKeySpace.classList.remove('invisible') : applyNewKeySpace.classList.add('invisible');
+                break;
         }
     }
 
@@ -229,6 +191,7 @@ function changeHotkeysPage() {
         //Presses any key on the keyboard to change it
         let previewCONTROLS = [];
         let previewCONTROLSNUMBERS = [];
+        keyInput.value = displayHotkey.textContent;
         var myKeyDown = function (evt) {
             // TODO: Implement a constant of valid accepted keys
 
@@ -279,6 +242,14 @@ function changeHotkeysPage() {
 
     displayHotkeyRight.addEventListener('click', () => {
         displayClickEvent('right', 3, displayHotkeyRight, keyInputRight, applyNewKeyRight);
-    })
-    ''
+    });
+
+    displayHotKeySpace.addEventListener('click', () => {
+        displayClickEvent('space', 4, displayHotKeySpace, keyInputSpace, applyNewKeySpace);
+    });
+
+    //Go back to Main Menu
+    optionsGoBack.addEventListener('click', () => {
+        slideOutAndChange(containerOptionsMenu, generatePage);
+    });
 }

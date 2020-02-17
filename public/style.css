@@ -20,15 +20,20 @@ input {
     animation-name: slideIn;
     animation-duration: 0.5s;
     overflow: hidden;
+    border-radius: 6px;
 }
 
 @keyframes slideIn {
     0% {
-        margin-top: -300px
+        margin-top: -800px;
     }
 
-    70% {
-        margin-top: 30px;
+    50% {
+        margin-top: 25px;
+    }
+
+    80% {
+        margin-top: 15px;
     }
 
     100% {
@@ -42,15 +47,11 @@ input {
     }
 
     30% {
-        margin-top: 30px;
-    }
-
-    99% {
-        margin-top: -300px;
+        margin-top: 35px;
     }
 
     100% {
-        margin-top: -1200px;
+        margin-top: -800px;
     }
 }
 
@@ -90,7 +91,7 @@ input {
     font-size: 32px;
     position: relative;
     word-wrap: break-word;
-    box-shadow: 0 1px white;
+    box-shadow: 1px 1px white;
 }
 
 .hotKeyColumn1 {
@@ -111,81 +112,17 @@ input {
     overflow: hidden;
 }
 
-.rowColor {
-    height: 32px;
-    width: 25%;
-    user-select: none;
-    cursor: pointer;
-    position: relative;
-    display: block;
-    text-align: start;
-    text-indent: 35px;
-    box-shadow: 1px 1px white;
-    float: left;
-    font-size: 24px;
-}
-
-.rowColor input {
-    position: absolute;
-    opacity: 0;
-    cursor: pointer;
-}
-
-.radio {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 12.5px;
-    width: 12.5px;
-    background-color: #eee;
-    border-radius: 50%;
-    margin: 10px 10px;
-}
-
-.rowColor:hover input~.radio {
-    background-color: #ccc;
-}
-
-.rowColor input:checked~.red {
-    background-color: rgb(180, 34, 34);
-}
-
-.rowColor input:checked~.blue {
-    background-color: rgb(54, 95, 146);
-}
-
-.rowColor input:checked~.pink {
-    background-color: rgb(207, 46, 186);
-}
-
-.rowColor input:checked~.gray {
-    background-color: rgb(99, 91, 91);
-}
-
-.radio:after {
-    content: '';
-    position: absolute;
-    display: none;
-}
-
-.rowColor input:checked~.radio:after {
-    display: block;
-}
-
-.rowColor .radio:after {
-    top: 4px;
-    left: 4px;
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    background: white;
-}
-
 .menuButton {
     height: 30px;
     width: 120px;
     margin: 10px 40px;
     font-size: 20px;
+    outline: none;
+}
+
+.menuButton:hover,
+.threeColumns>input[type=button]:hover {
+    background-color: #ccc;
 }
 
 .displayHotkey {
@@ -193,10 +130,6 @@ input {
     width: 170px;
     margin: 10px 10px;
     font-size: 20px;
-}
-
-.menuButton:hover {
-    background-color: #ccc;
 }
 
 .keyHover:hover {
@@ -235,8 +168,98 @@ input {
     right: 5%;
     top: 10px;
     float: right;
+    border-radius: 6px;
 }
 
 .invisible {
     display: none;
+}
+
+.characterSelection {
+    height: 150px;
+    width: 25%;
+    float: left;
+    box-shadow: 1px 1px white, -1px -1px white;
+    font-size: 20px;
+}
+
+.characterSelection>input[type=radio] {
+    display: none;
+}
+
+#red {
+    background-color: #d00;
+}
+
+#red:hover {
+    background-color: #a00;
+}
+
+#blue {
+    background-color: #00d;
+}
+
+#blue:hover {
+    background-color: #00a;
+}
+
+#pink {
+    background-color: #d0d;
+}
+
+#pink:hover {
+    background-color: #a0a;
+}
+
+#gray {
+    background-color: #999;
+}
+
+#gray:hover {
+    background-color: #777;
+}
+
+.fourRows {
+    height: 50.5px;
+    box-shadow: 1px 1px white;
+    vertical-align: middle;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.startMenuButtons {
+    height: 100%;
+    width: 100%;
+    margin-top: 1px;
+    font-size: 20px;
+    outline: none;
+}
+
+#playerReadyCount {
+    text-align: center;
+    cursor: default;
+}
+
+.threeColumns {
+    height: 50px;
+    width: 33.33%;
+    width: calc(100%/3);
+    float: left;
+    box-shadow: -1px 0 white;
+}
+
+#containerStartMenu {
+    width: 600px;
+}
+
+.left {
+    float: left;
+    width: 30%;
+}
+
+.right {
+    float: left;
+    width: 70%;
+    box-shadow: 1px 1px white, -1px -1px white;
 }

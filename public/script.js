@@ -36,15 +36,17 @@ var displayHotKeySpace = document.getElementById('displayHotkeySpace');
 var keyInputSpace = document.getElementById('keyInputSpace');
 var applyNewKeySpace = document.getElementById('applyNewKeySpace');
 //Go back button Options Menu
-var optionsGoBack = document.getElementById('OptionsGoBack');
+var OptionsGoBack = document.getElementById('OptionsGoBack');
 //Lobby Menu
 var joinRoomInputNumber = document.getElementById('joinRoomInputNumber');
 var joinRoom = document.getElementById('joinRoom');
+var LobbyGoBack = document.getElementById('LobbyGoBack');
 var lobbyRooms = document.getElementById('lobbyRooms');
 var lobbyRoomsPlayerCount = document.getElementById('lobbyRoomsPlayerCount');
 var startMenuRoom = document.getElementById('startMenuRoom');
 var lobbyFinderRoom = document.getElementById('lobbyFinderRoom');
 //playerNames on Start Menu
+var StartGoBack = document.getElementById('StartGoBack');
 var playerNameRed = document.getElementById('playerNameRed');
 var playerNameBlue = document.getElementById('playerNameBlue');
 var playerNamePink = document.getElementById('playerNamePink');
@@ -59,7 +61,7 @@ var gray = document.getElementById('gray');
 
 //Controls (Up, Down, Left, Right, Space) (https://keycode.info/)
 var customKeys = localStorage.getItem('CustomKeys') == 'true' ? localStorage.getItem('CustomKeys') : false;
-
+let _roomNumber;
 if (customKeys) {
     var CONTROLS = JSON.parse(localStorage.getItem('Controls'));
     var CONTROLSNUMBERS = JSON.parse(localStorage.getItem('ControlsNumbers'));
@@ -98,8 +100,8 @@ socket.on('leaveRoom', () => {
     }, 600);
 });
 
-socket.on('updateLobbyRooms', (gameRooms) => {
-    updateLobbyRooms(gameRooms);
+socket.on('updateLobbyRooms', (gameRoomsReceived) => {
+    updateLobbyRooms(gameRoomsReceived);
 });
 
 socket.on('updatePlayerCount', (roomCount) => {
@@ -136,6 +138,20 @@ function updateLobbyRooms(gameRooms) {
     }
 
     //Populates the list again
+    let divRooms = document.createElement('div');
+    divRooms.classList.add('borderBottom');
+    divRooms.classList.add('lobbyRoomsTitle');
+    divRooms.style.borderTopLeftRadius = '6px';
+    divRooms.textContent = 'Rooms';
+    lobbyRooms.appendChild(divRooms);
+
+    let divRoomsPlayerCounter = document.createElement('div');
+    divRoomsPlayerCounter.classList.add('borderBottom');
+    divRoomsPlayerCounter.classList.add('lobbyRoomsTitle');
+    divRoomsPlayerCounter.style.borderTopRightRadius = '6px';
+    divRoomsPlayerCounter.textContent = 'Players'
+    lobbyRoomsPlayerCount.appendChild(divRoomsPlayerCounter);
+
     for (let i = 0; i < gameRooms.length; i++) {
         let div = document.createElement('div');
         div.classList.add('borderBottom');
@@ -179,6 +195,9 @@ function generatePage() {
 function startGamePage() {
     visible(false, false, false, true);
 
+    LobbyGoBack.addEventListener('click', () => {
+        slideOutAndChange(containerStartMenu, generatePage);
+    });
     joinRoomInputNumber.addEventListener('input', function () {
         this.value = Math.abs(this.value.replace(/[^0-9]/g, '').slice(0, this.maxLength));
     });
@@ -187,6 +206,12 @@ function startGamePage() {
             roomNumber: joinRoomInputNumber.value,
             playerName: playerName
         });
+
+        _roomNumber = joinRoomInputNumber.value;
+    });
+
+    StartGoBack.addEventListener('click', () => {
+        socket.emit('leaveRoom', _roomNumber);
     });
 
     red.addEventListener('click', () => {
@@ -321,7 +346,7 @@ function optionsMenuPage() {
     });
 
     //Go back to Main Menu
-    optionsGoBack.addEventListener('click', () => {
+    OptionsGoBack.addEventListener('click', () => {
         slideOutAndChange(containerOptionsMenu, generatePage);
     });
 }

@@ -115,7 +115,7 @@ input {
 .menuButton {
     height: 30px;
     width: 120px;
-    margin: 10px 40px;
+    margin: 10px 30px;
     font-size: 20px;
     outline: none;
 }
@@ -280,4 +280,11 @@ input {
 .borderBottom {
     box-shadow: 0 1px white;
     font-size: 24px;
+}
+
+.lobbyRoomsTitle {
+    font-size: 30px;
+    background-color: white;
+    color: black;
+    border: 1px solid black;
 }

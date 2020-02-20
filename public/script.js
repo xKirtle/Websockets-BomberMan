@@ -3,7 +3,6 @@
 var socket = io.connect();
 
 //DOM QUERIES
-var playerName = localStorage.getItem('playerName');
 var body = document.getElementsByTagName('body')[0];
 //Containers
 var containerPromptName = document.getElementById('containerPromptName');
@@ -58,6 +57,8 @@ var blue = document.getElementById('blue');
 var pink = document.getElementById('pink');
 var gray = document.getElementById('gray');
 
+//Player Name
+var playerName = localStorage.getItem('playerName');
 
 //Controls (Up, Down, Left, Right, Space) (https://keycode.info/)
 var customKeys = localStorage.getItem('CustomKeys') == 'true' ? localStorage.getItem('CustomKeys') : false;
@@ -70,17 +71,23 @@ if (customKeys) {
     var CONTROLSNUMBERS = [87, 83, 65, 68, 32];
 }
 
+//Initializing all the event listeners
+promptName();
+generatePage();
+startGamePage();
+optionsMenuPage();
+
 //Emit Events
 socket.emit('socketConnection', playerName);
 socket.emit('connection', playerName);
 
 //Receive Events
 socket.on('promptName', () => {
-    promptName();
+    visible(true, false, false, false);
 });
 
 socket.on('generatePage', (gameRooms) => {
-    generatePage();
+    visible(false, true, false, false);
     updateLobbyRooms(gameRooms);
 });
 
@@ -111,11 +118,21 @@ socket.on('updatePlayerCount', (roomCount) => {
 });
 
 //Functions
-function slideOutAndChange(container, func) {
+function slideOutAndChange(container, page) {
     container.classList.add('slideOut');
     container.style.marginTop = '-600px';
     setTimeout(() => {
-        func();
+        switch (page) {
+            case generatePage:
+                visible(false, true, false, false);
+                break;
+            case optionsMenuPage:
+                visible(false, false, true, false);
+                break;
+            case startGamePage:
+                visible(false, false, false, true);
+                break;
+        }
     }, 600);
     setTimeout(() => {
         container.classList.remove('slideOut');
@@ -166,21 +183,20 @@ function updateLobbyRooms(gameRooms) {
 }
 
 function promptName() {
-    visible(true, false, false, false);
-
     playerNameInput.addEventListener('keypress', (evt) => {
         let keycode = (evt.keyCode ? evt.keyCode : evt.which);
         if (keycode == '13') {
             localStorage.setItem('playerName', playerNameInput.value);
             playerName = localStorage.getItem('playerName');
             slideOutAndChange(containerPromptName, generatePage);
+
+            console.log("after:", playerName);
+
         }
     });
 }
 
 function generatePage() {
-    visible(false, true, false, false);
-    containerMainMenu.classList.remove('slideOut');
     welcome.textContent = 'Welcome back, ' + playerName;
 
     startGame.addEventListener('click', () => {
@@ -193,8 +209,6 @@ function generatePage() {
 }
 
 function startGamePage() {
-    visible(false, false, false, true);
-
     LobbyGoBack.addEventListener('click', () => {
         slideOutAndChange(containerStartMenu, generatePage);
     });
@@ -238,8 +252,6 @@ function startGamePage() {
 }
 
 function optionsMenuPage() {
-    visible(false, false, true, false);
-
     displayHotkeyUp.textContent = CONTROLS[0];
     displayHotkeyDown.textContent = CONTROLS[1];
     displayHotkeyLeft.textContent = CONTROLS[2];

@@ -28,44 +28,79 @@ io.on('connection', (socket) => {
         }
     });
 
+    socket.on('disconnecting', () => {
+        //Similar to leaveRoom except I need to go find which room the socket was on
+        let rooms = Object.keys(socket.rooms);
+        if (rooms[0] <= 3) {
+            removePlayerFromRoom(rooms[0]);
+        }
+    });
+
     socket.on('joinRoom', (data) => {
         function createNewRoom(roomNumber, playerName) {
             let newRoom = {
                 roomNumber: roomNumber,
                 roomCount: 1,
                 Players: {
-                    Red: ['', ''],
-                    Blue: ['', ''],
-                    Pink: ['', ''],
-                    Gray: ['', '']
+                    List: [
+                        {
+                            PlayerName: '',
+                            SocketId: ''
+                        },
+                        {
+                            PlayerName: '',
+                            SocketId: ''
+                        },
+                        {
+                            PlayerName: '',
+                            SocketId: ''
+                        },
+                        {
+                            PlayerName: '',
+                            SocketId: ''
+                        }
+                    ],
+                    Red: [''],
+                    Blue: [''],
+                    Pink: [''],
+                    Gray: ['']
                 },
-                Host: playerName
+                Host: ''
             };
-            //order game rooms by roomNumber
+            let newPlayer = {
+                PlayerName: playerName,
+                SocketId: socket.id
+            };
+            newRoom.Players.List[0] = newPlayer;
+            newRoom.Host = newPlayer;
             gameRooms.push(newRoom);
         }
 
         let duplicateIndex = findRoomByNumber(data.roomNumber);
 
         if (duplicateIndex >= 0 && gameRooms[duplicateIndex].roomCount < 4) {
-            gameRooms[duplicateIndex].roomCount = parseInt(gameRooms[duplicateIndex].roomCount) + 1;
+            gameRooms[duplicateIndex].Players.List[gameRooms[duplicateIndex].roomCount] = {
+                PlayerName: data.playerName,
+                SocketId: socket.id
+            };
+            gameRooms[duplicateIndex].roomCount = gameRooms[duplicateIndex].roomCount + 1;
             socket.join(data.roomNumber);
             socket.emit('joinRoom');
             io.to(data.roomNumber).emit('updatePlayerCount', gameRooms[duplicateIndex].roomCount);
-            io.sockets.emit('updateLobbyRooms', gameRooms);
 
         } else if (typeof gameRooms[duplicateIndex] == 'undefined') {
             createNewRoom(data.roomNumber, data.playerName);
             socket.join(data.roomNumber);
             socket.emit('joinRoom');
             io.to(data.roomNumber).emit('updatePlayerCount', 1);
-            io.sockets.emit('updateLobbyRooms', gameRooms);
         }
 
-        for (let index = 0; index < gameRooms.length; index++) {
-            console.log(gameRooms[index]);
-            console.log("-- -- -- -- -- -- -- -- -- --");
-        }
+        sortGameRooms();
+        io.sockets.emit('updateLobbyRooms', gameRooms);
+    });
+
+    socket.on('leaveRoom', (roomNumber) => {
+        removePlayerFromRoom(roomNumber);
     });
 
     function findRoomByNumber(roomNumber) {
@@ -86,21 +121,40 @@ io.on('connection', (socket) => {
         }
     }
 
-    socket.on('leaveRoom', (roomNumber) => {
-        //Leave room
+    function sortGameRooms() {
+        gameRooms.sort((a, b) => {
+            return a.roomNumber - b.roomNumber;
+        });
+    }
+
+    function removePlayerFromRoom(roomNumber) {
         let duplicateIndex = findRoomByNumber(roomNumber);
-        if (duplicateIndex >= 0) {
-            console.log('Before:', gameRooms[duplicateIndex].roomCount);
+        let room = gameRooms[duplicateIndex];
 
-            gameRooms[duplicateIndex].roomCount = parseInt(gameRooms[duplicateIndex].roomCount) - 1;
-
-            console.log('After:', gameRooms[duplicateIndex].roomCount);
-            console.log('');
-
-            socket.leave(roomNumber);
-            socket.emit('leaveRoom');
-            io.to(roomNumber).emit('updatePlayerCount', gameRooms[duplicateIndex].roomCount);
-            io.sockets.emit('updateLobbyRooms', gameRooms);
+        if (room.Host.SocketId != socket.id) {
+            for (let index = 0; index < room.roomCount; index++) {
+                if (room.Players.List[index].SocketId == socket.id) {
+                    room.Players.List.splice(index, 1);
+                    //remove char selection of the removed player
+                    break;
+                }
+            }
+        } else {
+            room.Players.List.splice(0, 1);
+            //remove char selection of the host
+            room.Host = room.Players.List[0];
         }
-    });
+        socket.leave(roomNumber);
+        socket.emit('leaveRoom');
+        gameRooms[duplicateIndex].roomCount -= 1;
+
+        if (room.roomCount == 0) {
+            gameRooms.splice(duplicateIndex, 1);
+        } else {
+            io.to(roomNumber).emit('updatePlayerCount', gameRooms[duplicateIndex].roomCount);
+        }
+
+        sortGameRooms();
+        io.sockets.emit('updateLobbyRooms', gameRooms);
+    }
 });

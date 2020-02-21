@@ -181,44 +181,24 @@ input {
     float: left;
     box-shadow: 1px 1px white, -1px -1px white;
     font-size: 20px;
+    background-color: #999;
+}
+
+.characterSelection:hover {
+    background-color: #777;
 }
 
 .characterSelection>input[type=radio] {
     display: none;
 }
 
-#red {
-    background-color: #d00;
+.characterSelection>img {
+    margin-top: 25px;
 }
 
-/* #red:hover {
-    background-color: #a00;
-    red.style.filter = 'brightness(75%)';
-} */
-
-#blue {
-    background-color: #00d;
+.characterSelected {
+    background-color: #555 !important;
 }
-
-/* #blue:hover {
-    background-color: #00a;
-} */
-
-#pink {
-    background-color: #d0d;
-}
-
-/* #pink:hover {
-    background-color: #a0a;
-} */
-
-#gray {
-    background-color: #999;
-}
-
-/* #gray:hover {
-    background-color: #777;
-} */
 
 .fourRows {
     height: 50.5px;

@@ -104,17 +104,21 @@
             <div class="right">
                 <div class=" row" style="padding: 10px 0px;">CHOOSE A CHARACTER</div>
                 <div class="row">
-                    <div class="characterSelection" id="red">
-                        <input type="radio" name="characterSelection" value="Red" />
-                    </div>
                     <div class="characterSelection" id="blue">
                         <input type="radio" name="characterSelection" value="Blue" />
+                        <img src="images/Player blue/Idle.png">
                     </div>
-                    <div class="characterSelection" id="pink">
-                        <input type="radio" name="characterSelection" value="Pink" />
+                    <div class="characterSelection" id="black">
+                        <input type="radio" name="characterSelection" value="Black" />
+                        <img src="images/Player black/Idle.png">
                     </div>
-                    <div class="characterSelection" id="gray">
-                        <input type="radio" name="characterSelection" value="Gray" />
+                    <div class="characterSelection" id="green">
+                        <input type="radio" name="characterSelection" value="Green" />
+                        <img src="images/Player green/Idle.png">
+                    </div>
+                    <div class="characterSelection" id="yellow">
+                        <input type="radio" name="characterSelection" value="Yellow" />
+                        <img src="images/Player yellow/Idle.png">
                     </div>
                 </div>
                 <div class="row">
@@ -123,14 +127,13 @@
                             id="playerReadyCount" />
                     </div>
                     <div class="threeColumns">
-                        <input type="button" value="Ready" class="startMenuButtons" />
+                        <input type="button" value="Ready" class="startMenuButtons" id="readyButton" />
                     </div>
                     <div class="threeColumns">
                         <input type="button" value="Leave" class="startMenuButtons" id="StartGoBack" />
                     </div>
                 </div>
             </div>
-            <div class="roomPlayers" id="roomPlayerNames">Players: </div>
         </div>
         <div id="lobbyFinderRoom">
             <div class="right" id="lobbyRooms">

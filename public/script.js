@@ -44,21 +44,20 @@ var lobbyRooms = document.getElementById('lobbyRooms');
 var lobbyRoomsPlayerCount = document.getElementById('lobbyRoomsPlayerCount');
 var startMenuRoom = document.getElementById('startMenuRoom');
 var lobbyFinderRoom = document.getElementById('lobbyFinderRoom');
-//playerNames on Start Menu
+//Start Game Menu
 var StartGoBack = document.getElementById('StartGoBack');
-var playerNameRed = document.getElementById('playerNameRed');
-var playerNameBlue = document.getElementById('playerNameBlue');
-var playerNamePink = document.getElementById('playerNamePink');
-var playerNameGray = document.getElementById('playerNameGray');
+var playerNames = document.getElementsByClassName('fourRows');
 var playerReadyCount = document.getElementById('playerReadyCount');
+var readyButton = document.getElementById('readyButton');
 //Character Selection
-var red = document.getElementById('red');
 var blue = document.getElementById('blue');
-var pink = document.getElementById('pink');
-var gray = document.getElementById('gray');
+var black = document.getElementById('black');
+var green = document.getElementById('green');
+var yellow = document.getElementById('yellow');
 
 //Player Name
 var playerName = localStorage.getItem('playerName');
+var selectedCharacter = false;
 
 //Controls (Up, Down, Left, Right, Space) (https://keycode.info/)
 var customKeys = localStorage.getItem('CustomKeys') == 'true' ? localStorage.getItem('CustomKeys') : false;
@@ -91,12 +90,14 @@ socket.on('generatePage', (gameRooms) => {
     updateLobbyRooms(gameRooms);
 });
 
-socket.on('joinRoom', () => {
+socket.on('joinRoom', (room) => {
     slideOutAndChange(containerStartMenu, startGamePage);
     setTimeout(() => {
         lobbyFinderRoom.classList.add('invisible');
         startMenuRoom.classList.remove('invisible');
     }, 600);
+
+    updateSelectedCharacters(room);
 });
 
 socket.on('leaveRoom', () => {
@@ -111,10 +112,20 @@ socket.on('updateLobbyRooms', (gameRoomsReceived) => {
     updateLobbyRooms(gameRoomsReceived);
 });
 
-socket.on('updatePlayerCount', (roomCount) => {
-    // TODO: Change below
-    //Updating the Ready count right now..
-    playerReadyCount.value = roomCount + '/4';
+socket.on('updatePlayerList', (list) => {
+    for (let index = 0; index < list.length; index++) {
+        playerNames[index].innerHTML = list[index].PlayerName;
+    }
+});
+
+socket.on('updateSelectedCharacters', (room) => {
+    updateSelectedCharacters(room);
+});
+
+socket.on('changedCharacter', (colorChanged) => {
+    if (colorChanged != null) {
+        selectedCharacter = true;
+    }
 });
 
 //Functions
@@ -182,6 +193,29 @@ function updateLobbyRooms(gameRooms) {
     }
 }
 
+function updateSelectedCharacters(room) {
+    if (room.Players.Blue != '') {
+        blue.classList.add('characterSelected');
+    } else {
+        blue.classList.remove('characterSelected');
+    }
+    if (room.Players.Black != '') {
+        black.classList.add('characterSelected');
+    } else {
+        black.classList.remove('characterSelected');
+    }
+    if (room.Players.Green != '') {
+        green.classList.add('characterSelected');
+    } else {
+        green.classList.remove('characterSelected');
+    }
+    if (room.Players.Yellow != '') {
+        yellow.classList.add('characterSelected');
+    } else {
+        yellow.classList.remove('characterSelected');
+    }
+}
+
 function promptName() {
     playerNameInput.addEventListener('keypress', (evt) => {
         let keycode = (evt.keyCode ? evt.keyCode : evt.which);
@@ -228,27 +262,44 @@ function startGamePage() {
         socket.emit('leaveRoom', _roomNumber);
     });
 
-    red.addEventListener('click', () => {
-        selectChar();
-        //Removes last character selected, if any
-        //playerNameRed.textContent = playerName;
+    readyButton.addEventListener('click', () => {
+        if (selectedCharacter == true) {
+            //Ready vote increases 1
+
+        }
     });
 
     blue.addEventListener('click', () => {
-
+        socket.emit('requestCharacter', {
+            color: 'blue',
+            roomNumber: _roomNumber,
+            playerName: playerName
+        });
     });
 
-    pink.addEventListener('click', () => {
-
+    black.addEventListener('click', () => {
+        socket.emit('requestCharacter', {
+            color: 'black',
+            roomNumber: _roomNumber,
+            playerName: playerName
+        });
     });
 
-    gray.addEventListener('click', () => {
-
+    green.addEventListener('click', () => {
+        socket.emit('requestCharacter', {
+            color: 'green',
+            roomNumber: _roomNumber,
+            playerName: playerName
+        });
     });
 
-    function selectChar() {
-
-    }
+    yellow.addEventListener('click', () => {
+        socket.emit('requestCharacter', {
+            color: 'yellow',
+            roomNumber: _roomNumber,
+            playerName: playerName
+        });
+    });
 }
 
 function optionsMenuPage() {
@@ -362,3 +413,4 @@ function optionsMenuPage() {
         slideOutAndChange(containerOptionsMenu, generatePage);
     });
 }
+

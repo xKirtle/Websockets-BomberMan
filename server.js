@@ -41,29 +41,34 @@ io.on('connection', (socket) => {
             let newRoom = {
                 roomNumber: roomNumber,
                 roomCount: 1,
+                readyCount: 0,
                 Players: {
                     List: [
                         {
                             PlayerName: '',
-                            SocketId: ''
+                            SocketId: '',
+                            Ready: false
                         },
                         {
                             PlayerName: '',
-                            SocketId: ''
+                            SocketId: '',
+                            Ready: false
                         },
                         {
                             PlayerName: '',
-                            SocketId: ''
+                            SocketId: '',
+                            Ready: false
                         },
                         {
                             PlayerName: '',
-                            SocketId: ''
+                            SocketId: '',
+                            Ready: false
                         }
                     ],
-                    Red: [''],
-                    Blue: [''],
-                    Pink: [''],
-                    Gray: ['']
+                    Blue: '',
+                    Black: '',
+                    Green: '',
+                    Yellow: ''
                 },
                 Host: ''
             };
@@ -76,23 +81,25 @@ io.on('connection', (socket) => {
             gameRooms.push(newRoom);
         }
 
-        let duplicateIndex = findRoomByNumber(data.roomNumber);
+        let roomIndex = findRoomByNumber(data.roomNumber);
 
-        if (duplicateIndex >= 0 && gameRooms[duplicateIndex].roomCount < 4) {
-            gameRooms[duplicateIndex].Players.List[gameRooms[duplicateIndex].roomCount] = {
+        if (roomIndex >= 0 && gameRooms[roomIndex].roomCount < 4) {
+            gameRooms[roomIndex].Players.List[gameRooms[roomIndex].roomCount] = {
                 PlayerName: data.playerName,
                 SocketId: socket.id
             };
-            gameRooms[duplicateIndex].roomCount = gameRooms[duplicateIndex].roomCount + 1;
+            gameRooms[roomIndex].roomCount = gameRooms[roomIndex].roomCount + 1;
             socket.join(data.roomNumber);
-            socket.emit('joinRoom');
-            io.to(data.roomNumber).emit('updatePlayerCount', gameRooms[duplicateIndex].roomCount);
+            socket.emit('joinRoom', gameRooms[roomIndex]);
 
-        } else if (typeof gameRooms[duplicateIndex] == 'undefined') {
+            io.to(data.roomNumber).emit('updatePlayerList', gameRooms[roomIndex].Players.List);
+
+        } else if (typeof gameRooms[roomIndex] == 'undefined') {
             createNewRoom(data.roomNumber, data.playerName);
+            let roomIndex = findRoomByNumber(data.roomNumber);
             socket.join(data.roomNumber);
-            socket.emit('joinRoom');
-            io.to(data.roomNumber).emit('updatePlayerCount', 1);
+            socket.emit('joinRoom', gameRooms[roomIndex]);
+            io.to(data.roomNumber).emit('updatePlayerList', gameRooms[roomIndex].Players.List);
         }
 
         sortGameRooms();
@@ -103,19 +110,59 @@ io.on('connection', (socket) => {
         removePlayerFromRoom(roomNumber);
     });
 
+    socket.on('requestCharacter', (data) => {
+        let roomIndex = findRoomByNumber(data.roomNumber);
+        let colorChanged = null;
+        switch (data.color) {
+            case 'blue':
+                if (gameRooms[roomIndex].Players.Blue == '') {
+                    cleanLastColor(roomIndex);
+                    gameRooms[roomIndex].Players.Blue = socket.id
+                    colorChanged = 'blue';
+                }
+                break;
+            case 'black':
+                if (gameRooms[roomIndex].Players.Black == '') {
+                    cleanLastColor(roomIndex);
+                    gameRooms[roomIndex].Players.Black = socket.id;
+                    colorChanged = 'black';
+                }
+                break;
+            case 'green':
+                if (gameRooms[roomIndex].Players.Green == '') {
+                    cleanLastColor(roomIndex);
+                    gameRooms[roomIndex].Players.Green = socket.id;
+                    charactecolorChangedrChanged = 'green';
+                }
+                break;
+            case 'yellow':
+                if (gameRooms[roomIndex].Players.Yellow == '') {
+                    cleanLastColor(roomIndex);
+                    gameRooms[roomIndex].Players.Yellow = socket.id;
+                    colorChanged = 'yellow';
+                }
+                break;
+        }
+
+        io.to(data.roomNumber).emit('updateSelectedCharacters', gameRooms[roomIndex]);
+        socket.emit('changedCharacter', colorChanged);
+
+        console.log(gameRooms[roomIndex]);
+    });
+
     function findRoomByNumber(roomNumber) {
         let duplicate = false;
-        let duplicateIndex;
+        let roomIndex;
         for (let i = 0; i < gameRooms.length; i++) {
             if (gameRooms[i].roomNumber == roomNumber) {
                 duplicate = true;
-                duplicateIndex = i;
+                roomIndex = i;
                 break;
             }
         }
 
         if (duplicate) {
-            return duplicateIndex;
+            return roomIndex;
         } else {
             return -1;
         }
@@ -127,31 +174,50 @@ io.on('connection', (socket) => {
         });
     }
 
+    function cleanLastColor(roomIndex) {
+        if (gameRooms[roomIndex].Players.Blue == socket.id) {
+            gameRooms[roomIndex].Players.Blue = '';
+        }
+
+        if (gameRooms[roomIndex].Players.Black == socket.id) {
+            gameRooms[roomIndex].Players.Black = '';
+        }
+
+        if (gameRooms[roomIndex].Players.Green == socket.id) {
+            gameRooms[roomIndex].Players.Green = '';
+        }
+
+        if (gameRooms[roomIndex].Players.Yellow == socket.id) {
+            gameRooms[roomIndex].Players.Yellow = '';
+        }
+    }
+
     function removePlayerFromRoom(roomNumber) {
-        let duplicateIndex = findRoomByNumber(roomNumber);
-        let room = gameRooms[duplicateIndex];
+        let roomIndex = findRoomByNumber(roomNumber);
+        let room = gameRooms[roomIndex];
 
         if (room.Host.SocketId != socket.id) {
             for (let index = 0; index < room.roomCount; index++) {
                 if (room.Players.List[index].SocketId == socket.id) {
                     room.Players.List.splice(index, 1);
-                    //remove char selection of the removed player
+                    cleanLastColor(roomIndex);
                     break;
                 }
             }
         } else {
             room.Players.List.splice(0, 1);
-            //remove char selection of the host
+            cleanLastColor(roomIndex);
             room.Host = room.Players.List[0];
         }
         socket.leave(roomNumber);
         socket.emit('leaveRoom');
-        gameRooms[duplicateIndex].roomCount -= 1;
+        gameRooms[roomIndex].roomCount -= 1;
 
         if (room.roomCount == 0) {
-            gameRooms.splice(duplicateIndex, 1);
+            gameRooms.splice(roomIndex, 1);
         } else {
-            io.to(roomNumber).emit('updatePlayerCount', gameRooms[duplicateIndex].roomCount);
+            io.to(roomNumber).emit('updatePlayerList', gameRooms[roomIndex].Players.List);
+            io.to(roomNumber).emit('updateSelectedCharacters', gameRooms[roomIndex]);
         }
 
         sortGameRooms();

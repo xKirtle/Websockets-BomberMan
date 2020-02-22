@@ -3,8 +3,8 @@ var socket = require('socket.io');
 
 //App setup
 var app = express();
-var server = app.listen(7777, () => {
-    console.log('Listening to requests on port 7777');
+var server = app.listen(80, () => {
+    console.log('Listening to requests on port 80');
 });
 
 //Socket setup
@@ -15,7 +15,7 @@ app.use(express.static('public'));
 var gameRooms = [];
 
 io.on('connection', (socket) => {
-    console.log('New connection with the socket', socket.id);
+    console.log('Default:', socket.id);
     socket.on('socketConnection', (data) => {
         if (data == null) {
             socket.emit('promptName');
@@ -102,7 +102,7 @@ io.on('connection', (socket) => {
 
             io.to(data.roomNumber).emit('updatePlayerList', gameRooms[roomIndex].Players.List);
             io.to(data.roomNumber).emit('updateReadyCount', gameRooms[roomIndex].readyCount);
-            //Add the colorCube next to the name
+            io.to(data.roomNumber).emit('updateSelectedCharacters', gameRooms[roomIndex]);
 
         } else if (typeof gameRooms[roomIndex] == 'undefined') {
             createNewRoom(data.roomNumber, data.playerName);
@@ -182,8 +182,8 @@ io.on('connection', (socket) => {
             }
         }
 
-        // io.sockets.emit('updateLobbyRooms', gameRooms);
-        io.to(data.roomNumber).emit('updateReadyCount', gameRooms[roomIndex].readyCount)
+        io.sockets.emit('updateLobbyRooms', gameRooms);
+        io.to(data.roomNumber).emit('updateReadyCount', gameRooms[roomIndex].readyCount);
     });
 
     function findRoomByNumber(roomNumber) {
@@ -236,12 +236,18 @@ io.on('connection', (socket) => {
             for (let index = 0; index < room.roomCount; index++) {
                 if (room.Players.List[index].SocketId == socket.id) {
                     cleanLastColor(roomIndex);
+                    if (room.Players.List[index].Ready == true) {
+                        room.readyCount -= 1;
+                    }
                     room.Players.List.splice(index, 1);
                     break;
                 }
             }
         } else {
             cleanLastColor(roomIndex);
+            if (room.Players.List[0].Ready == true) {
+                room.readyCount -= 1;
+            }
             room.Players.List.splice(0, 1);
             room.Host = {
                 PlayerName: room.Players.List[0].PlayerName,
@@ -258,7 +264,7 @@ io.on('connection', (socket) => {
 
         socket.leave(roomNumber);
         socket.emit('leaveRoom');
-        gameRooms[roomIndex].roomCount -= 1;
+        room.roomCount -= 1;
 
         if (room.roomCount == 0) {
             gameRooms.splice(roomIndex, 1);
@@ -272,3 +278,7 @@ io.on('connection', (socket) => {
         io.sockets.emit('updateLobbyRooms', gameRooms);
     }
 });
+
+// io.of('/game').on('connection', (socket) => {
+//     console.log('Game:', socket.id.replace('/game#', ''));
+// });

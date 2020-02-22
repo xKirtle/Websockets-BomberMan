@@ -251,9 +251,6 @@ function promptName() {
             localStorage.setItem('playerName', playerNameInput.value);
             playerName = localStorage.getItem('playerName');
             slideOutAndChange(containerPromptName, generatePage);
-
-            console.log("after:", playerName);
-
         }
     });
 }

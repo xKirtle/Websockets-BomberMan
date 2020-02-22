@@ -280,3 +280,18 @@ input {
     word-wrap: break-word;
     z-index: -1;
 }
+
+.colorCube {
+    height: 20px;
+    width: 20px;
+    margin-left: 5px;
+    background-color: transparent;
+}
+
+.fourRowsName {
+    width: 80%;
+}
+
+.fourRowsColor {
+    width: 20%;
+}

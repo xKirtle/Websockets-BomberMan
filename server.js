@@ -47,21 +47,25 @@ io.on('connection', (socket) => {
                         {
                             PlayerName: '',
                             SocketId: '',
+                            Color: '',
                             Ready: false
                         },
                         {
                             PlayerName: '',
                             SocketId: '',
+                            Color: '',
                             Ready: false
                         },
                         {
                             PlayerName: '',
                             SocketId: '',
+                            Color: '',
                             Ready: false
                         },
                         {
                             PlayerName: '',
                             SocketId: '',
+                            Color: '',
                             Ready: false
                         }
                     ],
@@ -74,7 +78,9 @@ io.on('connection', (socket) => {
             };
             let newPlayer = {
                 PlayerName: playerName,
-                SocketId: socket.id
+                SocketId: socket.id,
+                Color: '',
+                Ready: false
             };
             newRoom.Players.List[0] = newPlayer;
             newRoom.Host = newPlayer;
@@ -86,13 +92,17 @@ io.on('connection', (socket) => {
         if (roomIndex >= 0 && gameRooms[roomIndex].roomCount < 4) {
             gameRooms[roomIndex].Players.List[gameRooms[roomIndex].roomCount] = {
                 PlayerName: data.playerName,
-                SocketId: socket.id
+                SocketId: socket.id,
+                Color: '',
+                Ready: false
             };
             gameRooms[roomIndex].roomCount = gameRooms[roomIndex].roomCount + 1;
             socket.join(data.roomNumber);
             socket.emit('joinRoom', gameRooms[roomIndex]);
 
             io.to(data.roomNumber).emit('updatePlayerList', gameRooms[roomIndex].Players.List);
+            io.to(data.roomNumber).emit('updateReadyCount', gameRooms[roomIndex].readyCount);
+            //Add the colorCube next to the name
 
         } else if (typeof gameRooms[roomIndex] == 'undefined') {
             createNewRoom(data.roomNumber, data.playerName);
@@ -113,6 +123,7 @@ io.on('connection', (socket) => {
     socket.on('requestCharacter', (data) => {
         let roomIndex = findRoomByNumber(data.roomNumber);
         let colorChanged = null;
+
         switch (data.color) {
             case 'blue':
                 if (gameRooms[roomIndex].Players.Blue == '') {
@@ -132,7 +143,7 @@ io.on('connection', (socket) => {
                 if (gameRooms[roomIndex].Players.Green == '') {
                     cleanLastColor(roomIndex);
                     gameRooms[roomIndex].Players.Green = socket.id;
-                    charactecolorChangedrChanged = 'green';
+                    colorChanged = 'green';
                 }
                 break;
             case 'yellow':
@@ -144,10 +155,35 @@ io.on('connection', (socket) => {
                 break;
         }
 
-        io.to(data.roomNumber).emit('updateSelectedCharacters', gameRooms[roomIndex]);
-        socket.emit('changedCharacter', colorChanged);
+        for (let index = 0; index < 4; index++) {
+            if (colorChanged != null && gameRooms[roomIndex].Players.List[index].SocketId == socket.id) {
+                gameRooms[roomIndex].Players.List[index].Color = colorChanged;
 
-        console.log(gameRooms[roomIndex]);
+                if (gameRooms[roomIndex].Players.List[index].Ready == true) {
+                    gameRooms[roomIndex].Players.List[index].Ready = false;
+                    gameRooms[roomIndex].readyCount -= 1;
+                }
+                break;
+            }
+        }
+
+        io.to(data.roomNumber).emit('updateSelectedCharacters', gameRooms[roomIndex]);
+        io.to(data.roomNumber).emit('updateReadyCount', gameRooms[roomIndex].readyCount);
+        socket.emit('changedCharacter', colorChanged);
+    });
+
+    socket.on('playerReady', (data) => {
+        let roomIndex = findRoomByNumber(data.roomNumber);
+        for (let index = 0; index < 4; index++) {
+            if (gameRooms[roomIndex].Players.List[index].Color == data.Color && gameRooms[roomIndex].Players.List[index].Ready != true) {
+                gameRooms[roomIndex].Players.List[index].Ready = true;
+                gameRooms[roomIndex].readyCount += 1;
+                break;
+            }
+        }
+
+        // io.sockets.emit('updateLobbyRooms', gameRooms);
+        io.to(data.roomNumber).emit('updateReadyCount', gameRooms[roomIndex].readyCount)
     });
 
     function findRoomByNumber(roomNumber) {
@@ -199,16 +235,27 @@ io.on('connection', (socket) => {
         if (room.Host.SocketId != socket.id) {
             for (let index = 0; index < room.roomCount; index++) {
                 if (room.Players.List[index].SocketId == socket.id) {
-                    room.Players.List.splice(index, 1);
                     cleanLastColor(roomIndex);
+                    room.Players.List.splice(index, 1);
                     break;
                 }
             }
         } else {
-            room.Players.List.splice(0, 1);
             cleanLastColor(roomIndex);
-            room.Host = room.Players.List[0];
+            room.Players.List.splice(0, 1);
+            room.Host = {
+                PlayerName: room.Players.List[0].PlayerName,
+                SocketId: room.Players.List[0].SocketId
+            };
         }
+        //Add a new empty Player to the end of the array
+        room.Players.List[3] = {
+            PlayerName: '',
+            SocketId: '',
+            Color: '',
+            Ready: false
+        };
+
         socket.leave(roomNumber);
         socket.emit('leaveRoom');
         gameRooms[roomIndex].roomCount -= 1;
@@ -218,6 +265,7 @@ io.on('connection', (socket) => {
         } else {
             io.to(roomNumber).emit('updatePlayerList', gameRooms[roomIndex].Players.List);
             io.to(roomNumber).emit('updateSelectedCharacters', gameRooms[roomIndex]);
+            io.to(roomNumber).emit('updateReadyCount', gameRooms[roomIndex].readyCount);
         }
 
         sortGameRooms();

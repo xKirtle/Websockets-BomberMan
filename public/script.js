@@ -2,7 +2,7 @@
 //Make connection
 var socket = io.connect();
 
-//DOM QUERIES
+//#region DOM QUERIES
 var body = document.getElementsByTagName('body')[0];
 //Containers
 var containerPromptName = document.getElementById('containerPromptName');
@@ -46,9 +46,10 @@ var startMenuRoom = document.getElementById('startMenuRoom');
 var lobbyFinderRoom = document.getElementById('lobbyFinderRoom');
 //Start Game Menu
 var StartGoBack = document.getElementById('StartGoBack');
-var playerNames = document.getElementsByClassName('fourRows');
+var playerNames = document.getElementsByClassName('fourRowsName');
 var playerReadyCount = document.getElementById('playerReadyCount');
 var readyButton = document.getElementById('readyButton');
+var colorCube = document.getElementsByClassName('colorCube');
 //Character Selection
 var blue = document.getElementById('blue');
 var black = document.getElementById('black');
@@ -58,6 +59,9 @@ var yellow = document.getElementById('yellow');
 //Player Name
 var playerName = localStorage.getItem('playerName');
 var selectedCharacter = false;
+var selectedCharacterColor = null;
+
+//#endregion
 
 //Controls (Up, Down, Left, Right, Space) (https://keycode.info/)
 var customKeys = localStorage.getItem('CustomKeys') == 'true' ? localStorage.getItem('CustomKeys') : false;
@@ -106,6 +110,9 @@ socket.on('leaveRoom', () => {
         startMenuRoom.classList.add('invisible');
         lobbyFinderRoom.classList.remove('invisible');
     }, 600);
+
+    selectedCharacter = false;
+    selectedCharacterColor = null;
 });
 
 socket.on('updateLobbyRooms', (gameRoomsReceived) => {
@@ -114,7 +121,7 @@ socket.on('updateLobbyRooms', (gameRoomsReceived) => {
 
 socket.on('updatePlayerList', (list) => {
     for (let index = 0; index < list.length; index++) {
-        playerNames[index].innerHTML = list[index].PlayerName;
+        playerNames[index].textContent = list[index].PlayerName;
     }
 });
 
@@ -125,7 +132,12 @@ socket.on('updateSelectedCharacters', (room) => {
 socket.on('changedCharacter', (colorChanged) => {
     if (colorChanged != null) {
         selectedCharacter = true;
+        selectedCharacterColor = colorChanged;
     }
+});
+
+socket.on('updateReadyCount', (readyCount) => {
+    playerReadyCount.value = readyCount + '/4';
 });
 
 //Functions
@@ -194,23 +206,39 @@ function updateLobbyRooms(gameRooms) {
 }
 
 function updateSelectedCharacters(room) {
+    function charSelected(color) {
+        for (let index = 0; index < 4; index++) {
+            if (room.Players.List[index].Color == '') {
+                colorCube[index].style.backgroundColor = 'transparent';
+            }
+
+            if (room.Players.List[index].Color == color) {
+                colorCube[index].style.backgroundColor = color;
+            }
+        }
+    }
+
     if (room.Players.Blue != '') {
         blue.classList.add('characterSelected');
+        charSelected('blue');
     } else {
         blue.classList.remove('characterSelected');
     }
     if (room.Players.Black != '') {
         black.classList.add('characterSelected');
+        charSelected('black');
     } else {
         black.classList.remove('characterSelected');
     }
     if (room.Players.Green != '') {
         green.classList.add('characterSelected');
+        charSelected('green');
     } else {
         green.classList.remove('characterSelected');
     }
     if (room.Players.Yellow != '') {
         yellow.classList.add('characterSelected');
+        charSelected('yellow');
     } else {
         yellow.classList.remove('characterSelected');
     }
@@ -264,8 +292,10 @@ function startGamePage() {
 
     readyButton.addEventListener('click', () => {
         if (selectedCharacter == true) {
-            //Ready vote increases 1
-
+            socket.emit('playerReady', {
+                roomNumber: _roomNumber,
+                Color: selectedCharacterColor
+            });
         }
     });
 
@@ -277,12 +307,28 @@ function startGamePage() {
         });
     });
 
+    blue.addEventListener('mouseover', () => {
+        blue.getElementsByTagName('img')[0].setAttribute('src', 'images/Player blue/upDown.gif');
+    });
+
+    blue.addEventListener('mouseout', () => {
+        blue.getElementsByTagName('img')[0].setAttribute('src', 'images/Player blue/Idle.png');
+    });
+
     black.addEventListener('click', () => {
         socket.emit('requestCharacter', {
             color: 'black',
             roomNumber: _roomNumber,
             playerName: playerName
         });
+    });
+
+    black.addEventListener('mouseover', () => {
+        black.getElementsByTagName('img')[0].setAttribute('src', 'images/Player black/upDown.gif');
+    });
+
+    black.addEventListener('mouseout', () => {
+        black.getElementsByTagName('img')[0].setAttribute('src', 'images/Player black/Idle.png');
     });
 
     green.addEventListener('click', () => {
@@ -293,6 +339,14 @@ function startGamePage() {
         });
     });
 
+    green.addEventListener('mouseover', () => {
+        green.getElementsByTagName('img')[0].setAttribute('src', 'images/Player green/upDown.gif');
+    });
+
+    green.addEventListener('mouseout', () => {
+        green.getElementsByTagName('img')[0].setAttribute('src', 'images/Player green/Idle.png');
+    });
+
     yellow.addEventListener('click', () => {
         socket.emit('requestCharacter', {
             color: 'yellow',
@@ -300,6 +354,15 @@ function startGamePage() {
             playerName: playerName
         });
     });
+
+    yellow.addEventListener('mouseover', () => {
+        yellow.getElementsByTagName('img')[0].setAttribute('src', 'images/Player yellow/upDown.gif');
+    });
+
+    yellow.addEventListener('mouseout', () => {
+        yellow.getElementsByTagName('img')[0].setAttribute('src', 'images/Player yellow/Idle.png');
+    });
+
 }
 
 function optionsMenuPage() {
@@ -413,4 +476,3 @@ function optionsMenuPage() {
         slideOutAndChange(containerOptionsMenu, generatePage);
     });
 }
-

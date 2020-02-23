@@ -19,11 +19,7 @@ io.on('connection', (socket) => {
     socket.on('socketConnection', (data) => {
         if (data == null) {
             socket.emit('promptName');
-        }
-    });
-
-    socket.on('connection', (data) => {
-        if (data != null) {
+        } else {
             socket.emit('generatePage', gameRooms);
         }
     });
@@ -101,7 +97,7 @@ io.on('connection', (socket) => {
             socket.emit('joinRoom', gameRooms[roomIndex]);
 
             io.to(data.roomNumber).emit('updatePlayerList', gameRooms[roomIndex].Players.List);
-            io.to(data.roomNumber).emit('updateReadyCount', gameRooms[roomIndex].readyCount);
+            io.to(data.roomNumber).emit('updateReadyCount', gameRooms[roomIndex]);
             io.to(data.roomNumber).emit('updateSelectedCharacters', gameRooms[roomIndex]);
 
         } else if (typeof gameRooms[roomIndex] == 'undefined') {
@@ -168,7 +164,7 @@ io.on('connection', (socket) => {
         }
 
         io.to(data.roomNumber).emit('updateSelectedCharacters', gameRooms[roomIndex]);
-        io.to(data.roomNumber).emit('updateReadyCount', gameRooms[roomIndex].readyCount);
+        io.to(data.roomNumber).emit('updateReadyCount', gameRooms[roomIndex]);
         socket.emit('changedCharacter', colorChanged);
     });
 
@@ -180,10 +176,16 @@ io.on('connection', (socket) => {
                 gameRooms[roomIndex].readyCount += 1;
                 break;
             }
+
+            if (gameRooms[roomIndex].Players.List[index].Color == data.Color && gameRooms[roomIndex].Players.List[index].Ready == true) {
+                gameRooms[roomIndex].Players.List[index].Ready = false;
+                gameRooms[roomIndex].readyCount -= 1;
+                break;
+            }
         }
 
         io.sockets.emit('updateLobbyRooms', gameRooms);
-        io.to(data.roomNumber).emit('updateReadyCount', gameRooms[roomIndex].readyCount);
+        io.to(data.roomNumber).emit('updateReadyCount', gameRooms[roomIndex]);
     });
 
     function findRoomByNumber(roomNumber) {
@@ -271,7 +273,7 @@ io.on('connection', (socket) => {
         } else {
             io.to(roomNumber).emit('updatePlayerList', gameRooms[roomIndex].Players.List);
             io.to(roomNumber).emit('updateSelectedCharacters', gameRooms[roomIndex]);
-            io.to(roomNumber).emit('updateReadyCount', gameRooms[roomIndex].readyCount);
+            io.to(roomNumber).emit('updateReadyCount', gameRooms[roomIndex]);
         }
 
         sortGameRooms();

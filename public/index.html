@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Bomberman - Lobby</title>
     <script src="/socket.io/socket.io.js"></script>
     <link href="style.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
@@ -157,10 +157,14 @@
         </div>
         <div id="lobbyFinderRoom">
             <div class="right" id="lobbyRooms">
-                <div class="borderBottom"></div>
+                <div class="borderBottom">
+                    <div class="borderBottom lobbyRoomsTitle" style="border-top-left-radius: 6px;">Rooms</div>
+                </div>
             </div>
             <div class="left" id="lobbyRoomsPlayerCount">
-                <div class="borderBottom"></div>
+                <div class="borderBottom">
+                    <div class="borderBottom lobbyRoomsTitle" style="border-top-right-radius: 6px;">Players</div>
+                </div>
             </div>
             <input type="button" class="menuButton" id="LobbyGoBack" value="Go Back" />
             <input type="number" class="menuButton" id="joinRoomInputNumber" value="0" maxlength="3" />

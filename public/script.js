@@ -82,7 +82,6 @@ optionsMenuPage();
 
 //Emit Events
 socket.emit('socketConnection', playerName);
-socket.emit('connection', playerName);
 
 //Receive Events
 socket.on('promptName', () => {
@@ -136,8 +135,20 @@ socket.on('changedCharacter', (colorChanged) => {
     }
 });
 
-socket.on('updateReadyCount', (readyCount) => {
-    playerReadyCount.value = readyCount + '/4';
+socket.on('updateReadyCount', (room) => {
+    for (let index = 0; index < 4; index++) {
+        while (colorCube[index].firstChild) {
+            colorCube[index].removeChild(colorCube[index].firstChild);
+        }
+
+        if (room.Players.List[index].Ready == true) {
+            let readyCheck = document.createElement('img');
+            readyCheck.src = 'images/checkbox.png';
+            colorCube[index].appendChild(readyCheck);
+        }
+    }
+
+    playerReadyCount.value = room.readyCount + '/4';
 });
 
 //Functions
@@ -250,6 +261,7 @@ function promptName() {
         if (keycode == '13') {
             localStorage.setItem('playerName', playerNameInput.value);
             playerName = localStorage.getItem('playerName');
+            welcome.textContent = 'Welcome back, ' + playerName;
             slideOutAndChange(containerPromptName, generatePage);
         }
     });
@@ -296,6 +308,7 @@ function startGamePage() {
         }
     });
 
+    //#region Character Event Listeners
     blue.addEventListener('click', () => {
         socket.emit('requestCharacter', {
             color: 'blue',
@@ -359,6 +372,7 @@ function startGamePage() {
     yellow.addEventListener('mouseout', () => {
         yellow.getElementsByTagName('img')[0].setAttribute('src', 'images/Player yellow/Idle.png');
     });
+    //#endregion
 
 }
 

@@ -101,6 +101,9 @@ socket.on('joinRoom', (room) => {
     }, 600);
 
     updateSelectedCharacters(room);
+    setTimeout(() => {
+        joinRoom.addEventListener('click', joinRoomFunc);
+    }, 1000)
 });
 
 socket.on('leaveRoom', () => {
@@ -108,6 +111,8 @@ socket.on('leaveRoom', () => {
     setTimeout(() => {
         startMenuRoom.classList.add('invisible');
         lobbyFinderRoom.classList.remove('invisible');
+
+        StartGoBack.addEventListener('click', leaveRoomFunc);
     }, 600);
 
     selectedCharacter = false;
@@ -279,6 +284,21 @@ function generatePage() {
     });
 }
 
+function joinRoomFunc() {
+    socket.emit('joinRoom', {
+        roomNumber: joinRoomInputNumber.value,
+        playerName: playerName
+    });
+
+    _roomNumber = joinRoomInputNumber.value;
+    joinRoom.removeEventListener('click', joinRoomFunc);
+}
+
+function leaveRoomFunc() {
+    socket.emit('leaveRoom', _roomNumber);
+    StartGoBack.removeEventListener('click', leaveRoomFunc);
+}
+
 function startGamePage() {
     LobbyGoBack.addEventListener('click', () => {
         slideOutAndChange(containerStartMenu, generatePage);
@@ -286,18 +306,10 @@ function startGamePage() {
     joinRoomInputNumber.addEventListener('input', function () {
         this.value = Math.abs(this.value.replace(/[^0-9]/g, '').slice(0, this.maxLength));
     });
-    joinRoom.addEventListener('click', () => {
-        socket.emit('joinRoom', {
-            roomNumber: joinRoomInputNumber.value,
-            playerName: playerName
-        });
 
-        _roomNumber = joinRoomInputNumber.value;
-    });
+    joinRoom.addEventListener('click', joinRoomFunc);
 
-    StartGoBack.addEventListener('click', () => {
-        socket.emit('leaveRoom', _roomNumber);
-    });
+    StartGoBack.addEventListener('click', leaveRoomFunc);
 
     readyButton.addEventListener('click', () => {
         if (selectedCharacter == true) {

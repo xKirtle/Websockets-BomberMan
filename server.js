@@ -13,8 +13,9 @@ var io = socket(server);
 //Static files
 app.use(express.static('public'));
 var gameRooms = [];
+var activeGameRooms = [];
 
-io.on('connection', (socket) => {
+io.of('/').on('connection', (socket) => {
     console.log('Default:', socket.id);
     socket.on('socketConnection', (data) => {
         if (data == null) {
@@ -186,6 +187,17 @@ io.on('connection', (socket) => {
 
         io.sockets.emit('updateLobbyRooms', gameRooms);
         io.to(data.roomNumber).emit('updateReadyCount', gameRooms[roomIndex]);
+
+        if (gameRooms[roomIndex].readyCount == 4) {
+            //Message shows up
+            activeGameRooms = JSON.parse(JSON.stringify(gameRooms))
+            setTimeout(() => {
+                if (gameRooms[roomIndex].readyCount == 4) {
+                    //if after 3s all 4 players are still ready, redirect to the game page
+                    io.to(data.roomNumber).emit('redirectToGame');
+                }
+            }, 3000);
+        }
     });
 
     function findRoomByNumber(roomNumber) {
@@ -281,6 +293,41 @@ io.on('connection', (socket) => {
     }
 });
 
-// io.of('/game').on('connection', (socket) => {
-//     console.log('Game:', socket.id.replace('/game#', ''));
-// });
+io.of('/game').on('connection', (socket) => {
+    console.log('Game:', socket.id.replace('/game#', ''));
+
+    socket.on('connectGame', (data) => {
+        let roomIndex = findRoomByNumber(data.oldRoomNumber);
+        let accepted = false;
+        for (let index = 0; index < 4; index++) {
+            if (activeGameRooms[roomIndex].Players.List[index].SocketId == data.oldSocketId) {
+                socket.emit('connectAccepted');
+                accepted = true;
+                break;
+            }
+
+        }
+
+        if (!accepted) {
+            socket.emit('connectDeclined');
+        }
+    });
+
+    function findRoomByNumber(roomNumber) {
+        let duplicate = false;
+        let roomIndex;
+        for (let i = 0; i < activeGameRooms.length; i++) {
+            if (activeGameRooms[i].roomNumber == roomNumber) {
+                duplicate = true;
+                roomIndex = i;
+                break;
+            }
+        }
+
+        if (duplicate) {
+            return roomIndex;
+        } else {
+            return -1;
+        }
+    }
+});

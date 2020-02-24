@@ -72,6 +72,8 @@ if (customKeys) {
 } else {
     var CONTROLS = ['UpArrow', 'DownArrow', 'LeftArrow', 'RightArrow', 'Space'];
     var CONTROLSNUMBERS = [87, 83, 65, 68, 32];
+    localStorage.setItem('Controls', JSON.stringify(CONTROLS));
+    localStorage.setItem('ControlsNumbers', JSON.stringify(CONTROLSNUMBERS));
 }
 
 //Initializing all the event listeners
@@ -154,6 +156,12 @@ socket.on('updateReadyCount', (room) => {
     }
 
     playerReadyCount.value = room.readyCount + '/4';
+});
+
+socket.on('redirectToGame', () => {
+    localStorage.setItem('oldSocketId', socket.id);
+    localStorage.setItem('oldRoomNumber', _roomNumber);
+    window.location = '/game';
 });
 
 //Functions
@@ -455,7 +463,7 @@ function optionsMenuPage() {
 
                 hotKeysVisible(Key, true, false, false);
             }
-        }
+        };
 
         window.addEventListener('keydown', myKeyDown);
         applyNewKey.addEventListener('click', () => {
